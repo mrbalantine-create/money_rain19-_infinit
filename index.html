@@ -637,8 +637,8 @@
 <script>
 // ── CONFIG ──────────────────────────────────────────────────────────────────
 let PUBLIC_SERVER_URL = 'https://moneyrain19-infinit-production.up.railway.app';
-let SERVER_URL = localStorage.getItem('alloc_server_url') || '';
-let DASH_TOKEN = localStorage.getItem('alloc_dash_token') || '';
+let SERVER_URL = localStorage.getItem('alloc_server_url_p2') || '';
+let DASH_TOKEN = localStorage.getItem('alloc_dash_token_p2') || '';
 if (SERVER_URL) PUBLIC_SERVER_URL = SERVER_URL;
 if (SERVER_URL && DASH_TOKEN) {
   document.getElementById('serverUrl').value = SERVER_URL;
@@ -646,8 +646,8 @@ if (SERVER_URL && DASH_TOKEN) {
   document.getElementById('configBanner').style.display = 'none';
 }
 function logout() {
-  localStorage.removeItem('alloc_server_url');
-  localStorage.removeItem('alloc_dash_token');
+  localStorage.removeItem('alloc_server_url_p2');
+  localStorage.removeItem('alloc_dash_token_p2');
   SERVER_URL = ''; DASH_TOKEN = '';
   document.getElementById('serverUrl').value = '';
   document.getElementById('dashToken').value = '';
@@ -663,8 +663,8 @@ function saveConfig() {
   if (!url || !token) { alert('Bitte URL und Token eingeben!'); return; }
   SERVER_URL = url; DASH_TOKEN = token;
   PUBLIC_SERVER_URL = url;
-  localStorage.setItem('alloc_server_url', url);
-  localStorage.setItem('alloc_dash_token', token);
+  localStorage.setItem('alloc_server_url_p2', url);
+  localStorage.setItem('alloc_dash_token_p2', token);
   document.getElementById('configBanner').style.display = 'none';
   applyPortfolioMode();
   loadHoldingsFromServer();
