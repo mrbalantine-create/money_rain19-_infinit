@@ -458,23 +458,6 @@
     <span class="pb-val" id="portfolioBanner">— USD</span>
   </div>
 
-  <!-- DOM MAJOR -->
-  <div id="domMajorSection">
-    <div class="section-title">Dominant Major</div>
-    <div id="domMajorCard" style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;">
-      <div>
-        <div style="font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:.2em;color:var(--silver);text-transform:uppercase;margin-bottom:6px">Stärkster Token</div>
-        <div id="domMajorName" style="font-family:'Share Tech Mono',monospace;font-size:2rem;font-weight:700;color:var(--orange)">BTC</div>
-      </div>
-      <div style="text-align:right">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Ratio States</div>
-        <div id="domRatioStates" style="font-family:'Share Tech Mono',monospace;font-size:.72rem;color:var(--silver);line-height:1.8">
-          ETH/BTC: —<br>SOL/BTC: —<br>SOL/ETH: —
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- SUMMARY -->
   <div>
     <div class="section-title">Gesamtübersicht</div>
@@ -504,7 +487,7 @@
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:16px 16px 10px;">
       <canvas id="signalChart" style="width:100%;height:200px;display:block;"></canvas>
       <div style="display:flex;gap:16px;margin-top:10px;flex-wrap:wrap;font-family:'Share Tech Mono',monospace;font-size:.65rem;">
-        <span style="color:#22c55e">● LTPI</span>
+        <span style="color:#bf5fff">● LTPI</span>
         <span style="color:#ff9500">● BTC</span>
         <span style="color:#00aaff">● ETH</span>
         <span style="color:#9945ff">● SOL</span>
@@ -692,7 +675,7 @@ function saveConfig() {
 // ── SCRIPTS ──────────────────────────────────────────────────────────────────
 const SCRIPTS = [
   {
-    id: 'ltpi', name: 'LTPI', color: '#22c55e',
+    id: 'ltpi', name: 'LTPI', color: '#bf5fff',
     subs: [
       { key: 'ltpi_rmsd',    label: 'Indikator 1' },
       { key: 'ltpi_bb',      label: 'Indikator 2' },
@@ -758,8 +741,6 @@ let state = {
   },
   alerts: [],
   last_update: null,
-  dom_major: 'BTC',
-  ratio_states: { ethbtc: 0, solbtc: 0, soleth: 0 },
 };
 
 // ── HELPERS ──────────────────────────────────────────────────────────────────
@@ -828,7 +809,7 @@ function renderFlips() {
     return;
   }
   count.textContent = state.alerts.length + ' Einträge';
-  const assetColor = { LTPI:'#22c55e', BTC:'var(--orange)', ETH:'var(--blue)', SOL:'var(--purple)', GOLD:'var(--gold)' };
+  const assetColor = { LTPI:'var(--purple)', BTC:'var(--orange)', ETH:'var(--blue)', SOL:'var(--purple)', GOLD:'var(--gold)' };
   entries.innerHTML = state.alerts.map(a => {
     const col    = assetColor[a.asset] || 'var(--txt)';
     const dirCol = a.direction === 'LONG' ? 'var(--lime)' : a.direction === 'SHORT' ? 'var(--red)' : 'var(--silver)';
@@ -841,22 +822,7 @@ function renderFlips() {
   }).join('');
 }
 
-function renderDomMajor() {
-  const dm = (state.dom_major || 'BTC').toUpperCase();
-  const colors = { BTC:'#ff9500', ETH:'#0099ff', SOL:'#9945ff' };
-  const col = colors[dm] || 'var(--cyan)';
-  const nameEl = document.getElementById('domMajorName');
-  const cardEl = document.getElementById('domMajorCard');
-  const ratioEl = document.getElementById('domRatioStates');
-  if (nameEl) { nameEl.textContent = dm; nameEl.style.color = col; }
-  if (cardEl) { cardEl.style.borderTopColor = col; cardEl.style.borderTopWidth = '2px'; cardEl.style.boxShadow = `0 0 20px ${col}18`; }
-  const rs = state.ratio_states || {};
-  const fmt = v => v === 1 ? '<span style="color:var(--lime)">▲ STRONG</span>' : v === -1 ? '<span style="color:var(--red)">▼ WEAK</span>' : '<span style="color:var(--silver)">— —</span>';
-  if (ratioEl) ratioEl.innerHTML =
-    `ETH/BTC: ${fmt(rs.ethbtc)}<br>SOL/BTC: ${fmt(rs.solbtc)}<br>SOL/ETH: ${fmt(rs.soleth)}`;
-}
-
-function renderAll() { renderSummary(); renderCards(); renderFlips(); renderChart(); renderDomMajor(); }
+function renderAll() { renderSummary(); renderCards(); renderFlips(); renderChart(); }
 
 // ── FETCH ────────────────────────────────────────────────────────────────────
 async function fetchData() {
@@ -876,8 +842,6 @@ async function fetchData() {
       btc_qfl:  d.btc_sub.qfl  ?? 0, btc_ndsod:  d.btc_sub.ndsod  ?? 0,
     });
     if (d.alerts) state.alerts = d.alerts;
-    if (d.ratio_states) Object.assign(state.ratio_states || (state.ratio_states = {}), d.ratio_states);
-    if (d.dom_major) state.dom_major = d.dom_major;
     if (d.last_update) {
       state.last_update = d.last_update;
       document.getElementById('lastUpdate').textContent = new Date(d.last_update).toLocaleTimeString('de-DE');
@@ -1164,7 +1128,7 @@ function renderChart() {
 
   // Draw lines
   const SERIES = [
-    { key:'ltpi', color:'#22c55e' },
+    { key:'ltpi', color:'#bf5fff' },
     { key:'btc',  color:'#ff9500' },
     { key:'eth',  color:'#00aaff' },
     { key:'sol',  color:'#9945ff' },
