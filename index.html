@@ -636,9 +636,10 @@
 
 <script>
 // ── CONFIG ──────────────────────────────────────────────────────────────────
-const PUBLIC_SERVER_URL = 'https://moneyrain19-infinit-production.up.railway.app';
+let PUBLIC_SERVER_URL = 'https://moneyrain19-infinit-production.up.railway.app';
 let SERVER_URL = localStorage.getItem('alloc_server_url') || '';
 let DASH_TOKEN = localStorage.getItem('alloc_dash_token') || '';
+if (SERVER_URL) PUBLIC_SERVER_URL = SERVER_URL;
 if (SERVER_URL && DASH_TOKEN) {
   document.getElementById('serverUrl').value = SERVER_URL;
   document.getElementById('dashToken').value = DASH_TOKEN;
@@ -656,14 +657,17 @@ function logout() {
 }
 
 
+function saveConfig() {
   const url   = document.getElementById('serverUrl').value.trim().replace(/\/$/, '');
   const token = document.getElementById('dashToken').value.trim();
   if (!url || !token) { alert('Bitte URL und Token eingeben!'); return; }
   SERVER_URL = url; DASH_TOKEN = token;
+  PUBLIC_SERVER_URL = url;
   localStorage.setItem('alloc_server_url', url);
   localStorage.setItem('alloc_dash_token', token);
   document.getElementById('configBanner').style.display = 'none';
   applyPortfolioMode();
+  loadHoldingsFromServer();
   fetchData();
 }
 
