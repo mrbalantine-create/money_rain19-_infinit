@@ -8,22 +8,22 @@
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:     #060a0f;
-    --bg2:    #0b1118;
-    --bg3:    #111923;
-    --border: #1e2d3d;
-    --border2:#243447;
-    --txt:    #c8d8e8;
-    --silver: #7a90a4;
-    --dim:    #3d5266;
-    --lime:   #39ff14;
-    --red:    #ff2d55;
+    --bg:     #080c14;
+    --bg2:    #0d1220;
+    --bg3:    #111828;
+    --border: #1a2540;
+    --border2:#203060;
+    --txt:    #ccd6f6;
+    --silver: #7a8ab0;
+    --dim:    #3a4a70;
+    --lime:   #00ff66;
+    --red:    #ff3355;
     --orange: #ff9500;
-    --blue:   #0af;
+    --blue:   #0099ff;
     --purple: #bf5fff;
-    --gold:   #ffd60a;
-    --cyan:   #00e5ff;
-    --teal:   #1de9b6;
+    --gold:   #ffcc00;
+    --cyan:   #00ccff;
+    --teal:   #00ffcc;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -186,7 +186,7 @@
     overflow: hidden;
     transition: border-color .2s;
   }
-  .script-card:hover { border-color: var(--border2); }
+  .script-card:hover { border-color: var(--cyan); box-shadow: 0 0 16px rgba(0,204,255,.08); }
   .card-header {
     display: flex;
     align-items: center;
@@ -195,7 +195,7 @@
     border-bottom: 1px solid var(--border);
   }
   .card-asset { display: flex; align-items: center; gap: 10px; }
-  .asset-dot  { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .asset-dot  { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; filter: brightness(1.2); }
   .card-name  { font-size: .95rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
   .card-signal {
     font-family: 'Share Tech Mono', monospace;
@@ -205,9 +205,9 @@
     border-radius: 3px;
     letter-spacing: .1em;
   }
-  .sig-long    { background: rgba(57,255,20,.12);  color: var(--lime);   border: 1px solid rgba(57,255,20,.3); }
-  .sig-short   { background: rgba(255,45,85,.12);  color: var(--red);    border: 1px solid rgba(255,45,85,.3); }
-  .sig-neutral { background: rgba(122,144,164,.1); color: var(--silver); border: 1px solid var(--border); }
+  .sig-long    { background: rgba(0,255,102,.1);  color: var(--lime);   border: 1px solid rgba(0,255,102,.4); box-shadow: 0 0 8px rgba(0,255,102,.15); }
+  .sig-short   { background: rgba(255,51,85,.1);  color: var(--red);    border: 1px solid rgba(255,51,85,.4); box-shadow: 0 0 8px rgba(255,51,85,.15); }
+  .sig-neutral { background: rgba(122,138,176,.08); color: var(--silver); border: 1px solid var(--border); }
 
   .card-body { padding: 14px 16px; }
   .sub-signals { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
@@ -311,6 +311,7 @@
     border-radius: 6px;
     padding: 16px 24px;
     border-left: 3px solid var(--cyan);
+    box-shadow: 0 0 24px rgba(0,204,255,.07), inset 0 0 40px rgba(0,204,255,.03);
   }
   .pb-label {
     font-family: 'Share Tech Mono', monospace;
@@ -455,6 +456,40 @@
   <div class="portfolio-banner">
     <span class="pb-label">Portfolio Value</span>
     <span class="pb-val" id="portfolioBanner">— USD</span>
+  </div>
+
+  <!-- DOM MAJOR -->
+  <div id="domMajorSection">
+    <div class="section-title">Dominant Major</div>
+    <div id="domMajorCard" style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:.2em;color:var(--silver);text-transform:uppercase;margin-bottom:6px">Stärkster Token</div>
+        <div id="domMajorName" style="font-family:'Share Tech Mono',monospace;font-size:2rem;font-weight:700;color:var(--orange)">BTC</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Ratio States</div>
+        <div id="domRatioStates" style="font-family:'Share Tech Mono',monospace;font-size:.72rem;color:var(--silver);line-height:1.8">
+          ETH/BTC: —<br>SOL/BTC: —<br>SOL/ETH: —
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOM MAJOR -->
+  <div id="domMajorSection">
+    <div class="section-title">Dominant Major</div>
+    <div id="domMajorCard" style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div style="font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:.2em;color:var(--silver);text-transform:uppercase;margin-bottom:6px">Stärkster Token</div>
+        <div id="domMajorName" style="font-family:'Share Tech Mono',monospace;font-size:2rem;font-weight:700;color:var(--orange)">BTC</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Ratio States</div>
+        <div id="domRatioStates" style="font-family:'Share Tech Mono',monospace;font-size:.72rem;color:var(--silver);line-height:1.8">
+          ETH/BTC: —<br>SOL/BTC: —<br>SOL/ETH: —
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- SUMMARY -->
@@ -740,6 +775,8 @@ let state = {
   },
   alerts: [],
   last_update: null,
+  dom_major: 'BTC',
+  ratio_states: { ethbtc: 0, solbtc: 0, soleth: 0 },
 };
 
 // ── HELPERS ──────────────────────────────────────────────────────────────────
@@ -756,7 +793,7 @@ function subBadge(v) {
 function renderSummary() {
   const card = s => {
     const sig = state.signals[s.signal_key] ?? 0;
-    return `<div class="summary-card">
+    return `<div class="summary-card" style="border-top:2px solid ${s.color};box-shadow:0 0 16px ${s.color}14">
       <div class="sum-asset" style="color:${s.color}">${s.name}</div>
       <div class="sum-signal" style="color:${sigColor(sig)}">${sigText(sig)}</div>
     </div>`;
@@ -774,7 +811,7 @@ function makeCard(s) {
     return `<div class="sub-row"><span class="sub-label">${sub.label}</span>${subBadge(v)}</div>`;
   }).join('');
   const netColor = (perf.net||'').startsWith('+') ? 'var(--lime)' : perf.net === '—' ? 'var(--silver)' : 'var(--red)';
-  return `<div class="script-card" id="card-${s.id}">
+  return `<div class="script-card" id="card-${s.id}" style="border-top:2px solid ${s.color};box-shadow:0 0 20px ${s.color}18,inset 0 1px 0 ${s.color}22">
     <div class="card-header">
       <div class="card-asset">
         <div class="asset-dot" style="background:${s.color};box-shadow:0 0 8px ${s.color}40"></div>
@@ -821,7 +858,22 @@ function renderFlips() {
   }).join('');
 }
 
-function renderAll() { renderSummary(); renderCards(); renderFlips(); renderChart(); }
+function renderDomMajor() {
+  const dm = (state.dom_major || 'BTC').toUpperCase();
+  const colors = { BTC:'#ff9500', ETH:'#0099ff', SOL:'#9945ff' };
+  const col = colors[dm] || 'var(--cyan)';
+  const nameEl = document.getElementById('domMajorName');
+  const cardEl = document.getElementById('domMajorCard');
+  const ratioEl = document.getElementById('domRatioStates');
+  if (nameEl) { nameEl.textContent = dm; nameEl.style.color = col; }
+  if (cardEl) { cardEl.style.borderTopColor = col; cardEl.style.borderTopWidth = '2px'; cardEl.style.boxShadow = `0 0 20px ${col}18`; }
+  const rs = state.ratio_states || {};
+  const fmt = v => v === 1 ? '<span style="color:var(--lime)">▲ STRONG</span>' : v === -1 ? '<span style="color:var(--red)">▼ WEAK</span>' : '<span style="color:var(--silver)">— —</span>';
+  if (ratioEl) ratioEl.innerHTML =
+    `ETH/BTC: ${fmt(rs.ethbtc)}<br>SOL/BTC: ${fmt(rs.solbtc)}<br>SOL/ETH: ${fmt(rs.soleth)}`;
+}
+
+function renderAll() { renderSummary(); renderCards(); renderFlips(); renderChart(); renderDomMajor(); }
 
 // ── FETCH ────────────────────────────────────────────────────────────────────
 async function fetchData() {
@@ -841,6 +893,8 @@ async function fetchData() {
       btc_qfl:  d.btc_sub.qfl  ?? 0, btc_ndsod:  d.btc_sub.ndsod  ?? 0,
     });
     if (d.alerts) state.alerts = d.alerts;
+    if (d.ratio_states) Object.assign(state.ratio_states || (state.ratio_states = {}), d.ratio_states);
+    if (d.dom_major) state.dom_major = d.dom_major;
     if (d.last_update) {
       state.last_update = d.last_update;
       document.getElementById('lastUpdate').textContent = new Date(d.last_update).toLocaleTimeString('de-DE');
