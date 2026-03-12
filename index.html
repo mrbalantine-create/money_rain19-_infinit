@@ -438,6 +438,7 @@
 <div class="header">
   <div class="header-title">Mission Control Center</div>
   <div class="header-right">
+    <button onclick="logout()" style="background:transparent;border:1px solid var(--border2);color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:.6rem;padding:4px 8px;border-radius:3px;cursor:pointer;letter-spacing:.08em" title="Server trennen">⏏ TRENNEN</button>
     <span><span class="live-dot" id="liveDot"></span><span id="statusText">DEMO</span></span>
     <div class="countdown-box">
       <span class="countdown-label">CANDLE CLOSE</span>
@@ -635,7 +636,7 @@
 
 <script>
 // ── CONFIG ──────────────────────────────────────────────────────────────────
-const PUBLIC_SERVER_URL = 'https://slapper-dashboard-production.up.railway.app';
+const PUBLIC_SERVER_URL = 'https://moneyrain19-infinit-production.up.railway.app';
 let SERVER_URL = localStorage.getItem('alloc_server_url') || '';
 let DASH_TOKEN = localStorage.getItem('alloc_dash_token') || '';
 if (SERVER_URL && DASH_TOKEN) {
@@ -643,7 +644,18 @@ if (SERVER_URL && DASH_TOKEN) {
   document.getElementById('dashToken').value = DASH_TOKEN;
   document.getElementById('configBanner').style.display = 'none';
 }
-function saveConfig() {
+function logout() {
+  localStorage.removeItem('alloc_server_url');
+  localStorage.removeItem('alloc_dash_token');
+  SERVER_URL = ''; DASH_TOKEN = '';
+  document.getElementById('serverUrl').value = '';
+  document.getElementById('dashToken').value = '';
+  document.getElementById('configBanner').style.display = 'flex';
+  applyPortfolioMode();
+  loadDemo();
+}
+
+
   const url   = document.getElementById('serverUrl').value.trim().replace(/\/$/, '');
   const token = document.getElementById('dashToken').value.trim();
   if (!url || !token) { alert('Bitte URL und Token eingeben!'); return; }
