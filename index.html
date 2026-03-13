@@ -220,8 +220,10 @@
 
   .card-body { padding: 14px 16px; }
   .sub-signals { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
-  .sub-row { display: flex; align-items: center; justify-content: space-between; font-size: .75rem; }
-  .sub-label { color: var(--silver); font-family: 'Share Tech Mono', monospace; font-size: .68rem; }
+  .sub-row { display: flex; align-items: center; gap: 4px; font-size: .75rem; margin-bottom: 1px; }
+  .sub-row .sub-badge { margin-left: auto; }
+  .sub-label { color: var(--silver); font-family: 'Share Tech Mono', monospace; font-size: .68rem; white-space: nowrap; }
+  .cond-dot { flex-shrink: 0; width: 10px; text-align: center; }
   .sub-badge { font-family: 'Share Tech Mono', monospace; font-size: .65rem; padding: 2px 7px; border-radius: 2px; letter-spacing: .08em; }
 
   .perf-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; border-top: 1px solid var(--border); padding-top: 12px; }
@@ -448,6 +450,7 @@
 <div class="header">
   <div class="header-title">Private Mission Control Center</div>
   <div class="header-right">
+    <button id="privacyBtn" onclick="togglePrivacy()" style="background:transparent;border:1px solid var(--border2);color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:.6rem;padding:4px 8px;border-radius:3px;cursor:pointer;letter-spacing:.08em" title="Hide sensitive data">👁 SHOW</button>
     <button onclick="logout()" style="background:transparent;border:1px solid var(--border2);color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:.6rem;padding:4px 8px;border-radius:3px;cursor:pointer;letter-spacing:.08em" title="Disconnect server">⏏ DISCONNECT</button>
     <span><span class="live-dot" id="liveDot"></span><span id="statusText">DEMO</span></span>
     <div class="countdown-box">
@@ -703,47 +706,62 @@ const SCRIPTS = [
   {
     id: 'ltpi', name: 'LTPI', color: '#22c55e',
     subs: [
-      { key: 'ltpi_rmsd',    label: 'Indicator 1' },
-      { key: 'ltpi_bb',      label: 'Indicator 2' },
-      { key: 'ltpi_onchain', label: 'Indicator 3' },
+      { key: 'ltpi_rmsd',    label: 'RMSD',     longCond: false, shortCond: true  },
+      { key: 'ltpi_bb',      label: 'Bollinger', longCond: true,  shortCond: false },
+      { key: 'ltpi_onchain', label: 'On-Chain',  longCond: true,  shortCond: true  },
     ],
+    // LONG = onchain AND bollinger | SHORT = onchain AND rmsd
+    longLogic:  'On-Chain AND Bollinger',
+    shortLogic: 'On-Chain AND RMSD',
     signal_key: 'ltpi',
   },
   {
     id: 'btc', name: 'BTC', color: '#ff9500',
     subs: [
-      { key: 'btc_hlsd',   label: 'Indicator 1' },
-      { key: 'btc_kalman', label: 'Indicator 2' },
-      { key: 'btc_qfl',    label: 'Indicator 3' },
-      { key: 'btc_ndsod',  label: 'Indicator 4' },
+      { key: 'btc_hlsd',   label: 'HLD',    longCond: true, shortCond: true  },
+      { key: 'btc_kalman', label: 'Kalman', longCond: true, shortCond: true  },
+      { key: 'btc_qfl',    label: 'QFL',    longCond: true, shortCond: true  },
+      { key: 'btc_ndsod',  label: 'NDSOD',  longCond: true, shortCond: false },
     ],
+    // LONG = hld OR kalman OR (qfl AND ndsod) | SHORT = hld OR kalman OR qfl
+    longLogic:  'HLD OR Kalman OR (QFL AND NDSOD)',
+    shortLogic: 'HLD OR Kalman OR QFL',
     signal_key: 'btc',
   },
   {
     id: 'eth', name: 'ETH', color: '#00aaff',
     subs: [
-      { key: 'eth_twin',  label: 'Indicator 1' },
-      { key: 'eth_sd',    label: 'Indicator 2' },
-      { key: 'eth_vidya', label: 'Indicator 3' },
+      { key: 'eth_twin',  label: 'Twin',  longCond: true,  shortCond: true  },
+      { key: 'eth_sd',    label: 'SD',    longCond: false, shortCond: true  },
+      { key: 'eth_vidya', label: 'VIDYA', longCond: true,  shortCond: false },
     ],
+    // LONG = twin AND vidya | SHORT = sd AND twin
+    longLogic:  'Twin AND VIDYA',
+    shortLogic: 'SD AND Twin',
     signal_key: 'eth',
   },
   {
     id: 'sol', name: 'SOL', color: '#bf5fff',
     subs: [
-      { key: 'sol_adaptive', label: 'Indicator 1' },
-      { key: 'sol_qfl',      label: 'Indicator 2' },
-      { key: 'sol_kalman',   label: 'Indicator 3' },
+      { key: 'sol_adaptive', label: 'Adaptive', longCond: true, shortCond: true  },
+      { key: 'sol_qfl',      label: 'QFL',      longCond: true, shortCond: true  },
+      { key: 'sol_kalman',   label: 'Kalman',   longCond: true, shortCond: true  },
     ],
+    // LONG = (adaptive AND qfl) OR kalman | SHORT = adaptive OR (qfl AND kalman)
+    longLogic:  '(Adaptive AND QFL) OR Kalman',
+    shortLogic: 'Adaptive OR (QFL AND Kalman)',
     signal_key: 'sol',
   },
   {
     id: 'gold', name: 'GOLD', color: '#ffd60a',
     subs: [
-      { key: 'gold_ema',  label: 'Indicator 1' },
-      { key: 'gold_sig',  label: 'Indicator 2' },
-      { key: 'gold_sig3', label: 'Indicator 3' },
+      { key: 'gold_ema',  label: 'EMA',   longCond: true, shortCond: true  },
+      { key: 'gold_sig',  label: 'Sig2',  longCond: true, shortCond: true  },
+      { key: 'gold_sig3', label: 'Sig3',  longCond: false, shortCond: true },
     ],
+    // LONG = sig1 AND sig2 | SHORT = sig1 AND sig2 AND sig3
+    longLogic:  'EMA AND Sig2',
+    shortLogic: 'EMA AND Sig2 AND Sig3',
     signal_key: 'gold',
   },
 ];
@@ -770,16 +788,58 @@ let state = {
   dom_major: 'BTC',
   ratio_states: { ethbtc: 0, solbtc: 0, soleth: 0 },
   ratio_raw: { ethbtc: null, solbtc: null, soleth: null },
+  perf: { ltpi:{}, btc:{}, eth:{}, sol:{}, gold:{} },
 };
+
+// ── PRIVACY MODE ─────────────────────────────────────────────────────────────
+let privacyMode = false;
+function togglePrivacy() {
+  privacyMode = !privacyMode;
+  const btn = document.getElementById('privacyBtn');
+  btn.textContent = privacyMode ? '🙈 HIDE' : '👁 SHOW';
+  btn.style.color = privacyMode ? 'var(--cyan)' : 'var(--dim)';
+  // Portfolio banner
+  const bannerEl = document.getElementById('portfolioBanner');
+  if (bannerEl) {
+    if (privacyMode) {
+      bannerEl.dataset.real = bannerEl.textContent;
+      bannerEl.textContent = '••••••• USD';
+    } else {
+      if (bannerEl.dataset.real) bannerEl.textContent = bannerEl.dataset.real;
+    }
+  }
+  // Re-render cards (indicator labels)
+  renderCards();
+  renderSummary();
+}
 
 // ── HELPERS ──────────────────────────────────────────────────────────────────
 const sigClass = v => v > 0 ? 'sig-long' : v < 0 ? 'sig-short' : 'sig-neutral';
 const sigText  = v => v > 0 ? 'LONG' : v < 0 ? 'SHORT' : 'NEUTRAL';
 const sigColor = v => v > 0 ? 'var(--lime)' : v < 0 ? 'var(--red)' : 'var(--silver)';
-function subBadge(v) {
-  const cls = v > 0 ? 'sig-long' : v < 0 ? 'sig-short' : 'sig-neutral';
-  const txt = v > 0 ? '▲ LONG' : v < 0 ? '▼ SHORT' : '— NEUT';
-  return `<span class="sub-badge ${cls}">${txt}</span>`;
+function subRows2(sub, v) {
+  const longActive  = v > 0;
+  const shortActive = v < 0;
+  const longCls  = longActive  ? 'sig-long'    : 'sig-neutral';
+  const shortCls = shortActive ? 'sig-short'   : 'sig-neutral';
+  const longTxt  = longActive  ? '● true'  : '○ false';
+  const shortTxt = shortActive ? '● true'  : '○ false';
+  const longDot  = sub.longCond
+    ? `<span class="cond-dot" title="Required for LONG"  style="color:var(--lime)">●</span>`
+    : `<span class="cond-dot" style="color:transparent">●</span>`;
+  const shortDot = sub.shortCond
+    ? `<span class="cond-dot" title="Required for SHORT" style="color:var(--red)">●</span>`
+    : `<span class="cond-dot" style="color:transparent">●</span>`;
+  const privLabel = privacyMode ? sub.label.replace(/.*/, s => 'Indicator') : sub.label;
+  return `
+    <div class="sub-row">
+      ${longDot}<span class="sub-label">${privLabel} <span style="color:var(--lime);font-size:.6rem">LONG</span></span>
+      <span class="sub-badge ${longCls}">${longTxt}</span>
+    </div>
+    <div class="sub-row">
+      ${shortDot}<span class="sub-label">${privLabel} <span style="color:var(--red);font-size:.6rem">SHORT</span></span>
+      <span class="sub-badge ${shortCls}">${shortTxt}</span>
+    </div>`;
 }
 
 // ── RENDER ───────────────────────────────────────────────────────────────────
@@ -798,11 +858,16 @@ function renderSummary() {
 
 function makeCard(s) {
   const sig  = state.signals[s.signal_key] ?? 0;
-  const perf = state.perf[s.id] || { net:'—', trades:'—', wr:'—' };
+  const perf = (state.perf && state.perf[s.id]) || { net:'—', trades:'—', wr:'—' };
   const subRows = s.subs.map(sub => {
     const v = state.subs[sub.key] ?? 0;
-    return `<div class="sub-row"><span class="sub-label">${sub.label}</span>${subBadge(v)}</div>`;
+    return subRows2(sub, v);
   }).join('');
+  const conditionHint = `
+    <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--dim)">
+      <span style="color:var(--lime)">▲ LONG: </span>${s.longLogic || '—'}<br>
+      <span style="color:var(--red)">▼ SHORT: </span>${s.shortLogic || '—'}
+    </div>`;
   const netColor = (perf.net||'').startsWith('+') ? 'var(--lime)' : perf.net === '—' ? 'var(--silver)' : 'var(--red)';
   return `<div class="script-card" id="card-${s.id}" style="border-top:2px solid ${s.color};box-shadow:0 0 20px ${s.color}18,inset 0 1px 0 ${s.color}22">
     <div class="card-header">
@@ -813,7 +878,7 @@ function makeCard(s) {
       <div class="card-signal ${sigClass(sig)}">${sigText(sig)}</div>
     </div>
     <div class="card-body">
-      <div class="sub-signals">${subRows}</div>
+      <div class="sub-signals">${subRows}${conditionHint}</div>
       <div class="perf-grid">
         <div class="perf-item"><span class="perf-val" style="color:${netColor}">${perf.net}</span><span class="perf-lbl">Net Profit</span></div>
         <div class="perf-item"><span class="perf-val" style="color:var(--txt)">${perf.trades}</span><span class="perf-lbl">Trades</span></div>
@@ -887,6 +952,7 @@ async function fetchData() {
       ltpi: d.signals.LTPI ?? 0, btc: d.signals.BTC ?? 0,
       eth:  d.signals.ETH  ?? 0, sol: d.signals.SOL ?? 0, gold: d.signals.GOLD ?? 0,
     });
+    if (d.perf) Object.assign(state.perf || (state.perf = {}), d.perf);
     if (d.btc_sub) Object.assign(state.subs, {
       btc_hlsd: d.btc_sub.hlsd ?? 0, btc_kalman: d.btc_sub.kalman ?? 0,
       btc_qfl:  d.btc_sub.qfl  ?? 0, btc_ndsod:  d.btc_sub.ndsod  ?? 0,
@@ -1026,17 +1092,18 @@ function calcPortfolio() {
   const total = Object.values(vals).reduce((a,b) => a+b, 0);
   const display = total > 0 ? fmtBig(total) + ' USD' : '— USD';
   document.getElementById('portfolioTotal').textContent = display;
-  document.getElementById('portfolioBanner').textContent = display;
+  const _pb = document.getElementById('portfolioBanner');
+  if (_pb) { _pb.dataset.real = display; _pb.textContent = privacyMode ? '••••••• USD' : display; }
 }
 
 async function fetchPrices() {
   const btn = document.getElementById('priceRefreshBtn');
   btn.textContent = '↻ ...';
   try {
-    const res = await fetch(
-      'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,pax-gold,binancecoin,dogecoin,cardano,hyperliquid,chainlink,sui,ripple&vs_currencies=usd',
-      { signal: AbortSignal.timeout(8000) }
-    );
+    const priceUrl = PUBLIC_SERVER_URL
+      ? PUBLIC_SERVER_URL + '/prices'
+      : 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,pax-gold,binancecoin,dogecoin,cardano,hyperliquid,chainlink,sui,ripple&vs_currencies=usd';
+    const res = await fetch(priceUrl, { signal: AbortSignal.timeout(10000) });
     const d = await res.json();
     prices.btc  = d.bitcoin?.usd        || null;
     prices.eth  = d.ethereum?.usd       || null;
