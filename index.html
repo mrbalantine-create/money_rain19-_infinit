@@ -220,7 +220,10 @@
 
   .card-body { padding: 14px 16px; }
   .sub-signals { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
-  .sub-row { display: flex; align-items: center; gap: 4px; font-size: .75rem; margin-bottom: 1px; }
+  .sub-row { display: flex; align-items: center; gap: 4px; font-size: .75rem; padding-bottom:5px; border-bottom:1px solid rgba(255,255,255,0.09); }
+  .sub-row:last-child { border-bottom: none; padding-bottom:0; }
+  body.light-mode .sub-row { border-bottom-color: rgba(0,0,0,0.12); }
+  body.light-mode .sub-row:last-child { border-bottom: none; }
   .sub-row .sub-badge { margin-left: auto; }
   .sub-label { color: var(--silver); font-family: 'Share Tech Mono', monospace; font-size: .68rem; white-space: nowrap; }
   .cond-dot { flex-shrink: 0; width: 10px; text-align: center; }
