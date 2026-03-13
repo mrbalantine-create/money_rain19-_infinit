@@ -1,13 +1,9 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#080c14">
-<title>Mission Control Center</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Private Mission Control Center</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -34,7 +30,7 @@
     background: var(--bg);
     color: var(--txt);
     font-family: 'Rajdhani', sans-serif;
-    font-size: 15px;
+    font-size: 14px;
     min-height: 100vh;
     overflow-x: hidden;
   }
@@ -42,7 +38,7 @@
     content: '';
     position: fixed;
     inset: 0;
-    background: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.07) 2px,rgba(0,0,0,.07) 4px);
+    background: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.06) 2px,rgba(0,0,0,.06) 4px);
     pointer-events: none;
     z-index: 9999;
   }
@@ -52,24 +48,18 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 24px;
+    padding: 10px 28px;
     background: var(--bg2);
     border-bottom: 1px solid var(--border);
     position: sticky;
     top: 0;
     z-index: 100;
     backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    padding-top: calc(env(safe-area-inset-top) + 28px);
-    padding-left: max(24px, env(safe-area-inset-left));
-    padding-right: max(24px, env(safe-area-inset-right));
-    flex-wrap: wrap;
-    gap: 8px;
   }
   .header-title {
-    font-size: 1.15rem;
+    font-size: 1rem;
     font-weight: 700;
-    letter-spacing: .15em;
+    letter-spacing: .18em;
     text-transform: uppercase;
     color: var(--cyan);
     font-family: 'Share Tech Mono', monospace;
@@ -77,360 +67,251 @@
   .header-right {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
     font-family: 'Share Tech Mono', monospace;
-    font-size: .72rem;
+    font-size: .68rem;
     color: var(--silver);
-    flex-wrap: wrap;
   }
-  .live-dot {
-    display: inline-block;
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: var(--dim);
-    margin-right: 6px;
-  }
-  .live-dot.online { background: var(--lime); box-shadow: 0 0 8px var(--lime); animation: pulse 2s infinite; }
-  .live-dot.offline { background: var(--red); }
+  .live-dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--dim); margin-right:5px; }
+  .live-dot.online  { background:var(--lime); box-shadow:0 0 7px var(--lime); animation:pulse 2s infinite; }
+  .live-dot.offline { background:var(--red); }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-
-  /* COUNTDOWN */
-  .countdown-box {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--bg3);
-    border: 1px solid var(--border2);
-    border-radius: 4px;
-    padding: 3px 10px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: .72rem;
-  }
-  .countdown-label { color: var(--silver); font-size: .62rem; letter-spacing: .1em; }
-  .countdown-val { color: var(--cyan); font-weight: 700; font-size: .8rem; min-width: 54px; text-align: center; }
-  .countdown-val.urgent { color: var(--red); animation: pulse 1s infinite; }
+  .countdown-box { display:flex;align-items:center;gap:5px;background:var(--bg3);border:1px solid var(--border2);border-radius:3px;padding:2px 8px;font-family:'Share Tech Mono',monospace;font-size:.68rem; }
+  .countdown-label { color:var(--silver);font-size:.58rem;letter-spacing:.1em; }
+  .countdown-val { color:var(--cyan);font-weight:700;font-size:.75rem;min-width:50px;text-align:center; }
+  .countdown-val.urgent { color:var(--red);animation:pulse 1s infinite; }
 
   /* CONFIG BANNER */
   #configBanner {
-    background: linear-gradient(90deg, #0b1a10, #091520);
+    background: linear-gradient(90deg,#0b1a10,#091520);
     border-bottom: 1px solid #1a3a1a;
-    padding: 12px 24px;
+    padding: 8px 28px;
     display: flex;
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
-    font-size: .82rem;
+    font-size: .78rem;
     font-family: 'Share Tech Mono', monospace;
   }
-  #configBanner label { color: var(--teal); font-size: .75rem; }
+  #configBanner label { color:var(--teal);font-size:.72rem; }
   #configBanner input {
-    background: #0a1a0f;
-    border: 1px solid #1a4a1a;
-    color: var(--lime);
-    padding: 5px 10px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: .75rem;
-    border-radius: 3px;
-    width: 240px;
+    background:#0a1a0f; border:1px solid #1a4a1a; color:var(--lime);
+    padding:4px 8px; font-family:'Share Tech Mono',monospace; font-size:.72rem;
+    border-radius:3px; width:220px;
   }
-  #configBanner input[type="password"] { width: 180px; }
+  #configBanner input[type="password"] { width:160px; }
   #configBanner button {
-    background: var(--teal);
-    color: #000;
-    border: none;
-    padding: 5px 14px;
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 700;
-    font-size: .8rem;
-    letter-spacing: .1em;
-    cursor: pointer;
-    border-radius: 3px;
+    background:var(--teal); color:#000; border:none; padding:4px 12px;
+    font-family:'Rajdhani',sans-serif; font-weight:700; font-size:.78rem;
+    letter-spacing:.1em; cursor:pointer; border-radius:3px;
   }
-  .cfg-note { color: var(--silver); font-size: .68rem; }
+  .cfg-note { color:var(--silver); font-size:.65rem; }
 
-  /* MAIN */
-  .main { padding: 20px 24px; display: flex; flex-direction: column; gap: 20px; }
+  /* DESKTOP LAYOUT */
+  .desktop-wrapper {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    grid-template-rows: auto;
+    gap: 0;
+    min-height: calc(100vh - 80px);
+  }
+
+  /* LEFT COLUMN */
+  .col-left {
+    border-right: 1px solid var(--border);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow-y: auto;
+    height: calc(100vh - 80px);
+    position: sticky;
+    top: 80px;
+  }
+
+  /* RIGHT COLUMN */
+  .col-right {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow-y: auto;
+  }
 
   .section-title {
-    font-size: .65rem;
+    font-size: .6rem;
     font-weight: 700;
     letter-spacing: .25em;
     text-transform: uppercase;
     color: var(--silver);
     font-family: 'Share Tech Mono', monospace;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
     display: flex;
     align-items: center;
-    gap: 10px;
-  }
-  .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-  /* SUMMARY */
-  .summary-row { display: flex; flex-direction: column; gap: 10px; }
-  .sum-full  { display: grid; grid-template-columns: 1fr; }
-  .sum-trio  { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-  .summary-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 14px 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    text-align: center;
-  }
-  .sum-asset { font-size: .65rem; letter-spacing: .2em; color: var(--silver); font-family: 'Share Tech Mono', monospace; text-transform: uppercase; }
-  .sum-signal { font-family: 'Share Tech Mono', monospace; font-size: 1.1rem; font-weight: 700; }
-
-  /* CARDS */
-  .card-full  { display: grid; grid-template-columns: 1fr; gap: 16px; }
-  .card-trio  { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .divider    { height: 1px; background: var(--border); opacity: .4; margin: 4px 0; }
-
-  .script-card {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    overflow: hidden;
-    transition: border-color .2s;
-  }
-  .script-card:hover { border-color: var(--cyan); box-shadow: 0 0 16px rgba(0,204,255,.08); }
-  .card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--border);
-  }
-  .card-asset { display: flex; align-items: center; gap: 10px; }
-  .asset-dot  { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; filter: brightness(1.2); }
-  .card-name  { font-size: .95rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
-  .card-signal {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: .7rem;
-    font-weight: 700;
-    padding: 4px 10px;
-    border-radius: 3px;
-    letter-spacing: .1em;
-  }
-  .sig-long    { background: rgba(0,255,102,.1);  color: var(--lime);   border: 1px solid rgba(0,255,102,.4); box-shadow: 0 0 8px rgba(0,255,102,.15); }
-  .sig-short   { background: rgba(255,51,85,.1);  color: var(--red);    border: 1px solid rgba(255,51,85,.4); box-shadow: 0 0 8px rgba(255,51,85,.15); }
-  .sig-neutral { background: rgba(122,138,176,.08); color: var(--silver); border: 1px solid var(--border); }
-
-  .card-body { padding: 14px 16px; }
-  .sub-signals { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
-  .sub-row { display: flex; align-items: center; gap: 4px; font-size: .75rem; margin-bottom: 1px; }
-  .sub-row .sub-badge { margin-left: auto; }
-  .sub-label { color: var(--silver); font-family: 'Share Tech Mono', monospace; font-size: .68rem; white-space: nowrap; }
-  .cond-dot { flex-shrink: 0; width: 10px; text-align: center; }
-  .sub-badge { font-family: 'Share Tech Mono', monospace; font-size: .65rem; padding: 2px 0; border-radius: 2px; letter-spacing: .08em; width: 52px; text-align: center; display: inline-block; }
-
-  .perf-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; border-top: 1px solid var(--border); padding-top: 12px; }
-  .perf-item { text-align: center; }
-  .perf-val  { font-family: 'Share Tech Mono', monospace; font-size: .85rem; font-weight: 700; display: block; }
-  .perf-lbl  { font-size: .6rem; color: var(--silver); letter-spacing: .08em; text-transform: uppercase; }
-
-  /* FLIP LOG */
-  .flip-log { background: var(--bg2); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
-  .flip-log-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 16px; background: var(--bg3); border-bottom: 1px solid var(--border);
-    font-family: 'Share Tech Mono', monospace; font-size: .7rem; color: var(--silver);
-    letter-spacing: .1em; text-transform: uppercase;
-  }
-  .flip-entries { max-height: 160px; overflow-y: auto; }
-  .flip-entry {
-    display: grid;
-    grid-template-columns: 60px 80px 1fr 120px;
-    align-items: center;
-    padding: 7px 16px;
-    border-bottom: 1px solid var(--border);
-    font-size: .75rem;
     gap: 8px;
   }
-  .flip-entry:last-child { border-bottom: none; }
-  .flip-time { font-family: 'Share Tech Mono', monospace; font-size: .65rem; color: var(--dim); }
-  .flip-msg  { color: var(--silver); font-size: .72rem; }
+  .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
 
-  /* FOOTER */
-  .footer {
-    padding: 12px 24px;
-    border-top: 1px solid var(--border);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: .65rem;
-    color: var(--dim);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  @keyframes flash { 0%{background:rgba(0,229,255,.1)} 100%{background:transparent} }
-  .flash { animation: flash .6s ease; }
-
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
-
-  /* MOBILE */
-  @media (max-width: 900px) {
-    .card-trio { grid-template-columns: 1fr; }
-  }
-  @media (max-width: 600px) {
-    .header { padding: 10px 14px; }
-    .header-title { font-size: .85rem; }
-    .header-right { font-size: .62rem; gap: 8px; }
-    #configBanner { padding: 10px 14px; flex-direction: column; align-items: flex-start; gap: 7px; }
-    #configBanner input { width: 100% !important; }
-    #configBanner button { width: 100%; padding: 8px; }
-    .main { padding: 12px 14px; gap: 14px; }
-    .sum-trio { grid-template-columns: repeat(3, 1fr); }
-    .card-header { padding: 10px 12px; }
-    .card-body { padding: 10px 12px; }
-    .card-name { font-size: .85rem; }
-    .perf-val { font-size: .75rem; }
-    .flip-entry { grid-template-columns: 50px 60px 1fr; padding: 6px 12px; }
-    .flip-entry > *:last-child { display: none; }
-    .footer { flex-direction: column; gap: 4px; text-align: center; padding: 10px 14px; }
-    .countdown-box { padding: 3px 7px; }
-  }
-  @media (max-width: 380px) {
-    .summary-row { grid-template-columns: repeat(2, 1fr); }
-  }
-  /* HOLDINGS VIEW MODE */
-  .holdings-view-grid { display: flex; flex-direction: column; gap: 8px; }
-  .hv-row {
-    display: grid;
-    grid-template-columns: 80px 1fr 140px;
-    align-items: center;
-    gap: 12px;
-    padding: 6px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .hv-row:last-child { border-bottom: none; }
-  .hv-asset { font-family: 'Share Tech Mono', monospace; font-size: .75rem; font-weight: 700; }
-  .hv-qty   { font-family: 'Share Tech Mono', monospace; font-size: .78rem; color: var(--txt); }
-  .hv-usd   { font-family: 'Share Tech Mono', monospace; font-size: .78rem; color: var(--silver); text-align: right; }
-
-
+  /* PORTFOLIO BANNER */
   .portfolio-banner {
     display: flex;
     align-items: center;
     justify-content: space-between;
     background: var(--bg2);
     border: 1px solid var(--border2);
-    border-radius: 6px;
-    padding: 16px 24px;
-    border-left: 3px solid var(--cyan);
-    box-shadow: 0 0 24px rgba(0,204,255,.07), inset 0 0 40px rgba(0,204,255,.03);
-  }
-  .pb-label {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: .7rem;
-    letter-spacing: .2em;
-    text-transform: uppercase;
-    color: var(--silver);
-  }
-  .pb-val {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: var(--cyan);
-    letter-spacing: .05em;
-  }
-  @media (max-width: 600px) {
-    .pb-val { font-size: 1.3rem; }
-    .portfolio-banner { padding: 12px 16px; }
-  }
-
-  /* PORTFOLIO */
-  .portfolio-box {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 16px;
-  }
-  .price-row {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-  .price-card {
-    background: var(--bg3);
-    border: 1px solid var(--border);
     border-radius: 5px;
-    padding: 8px 14px;
-    text-align: center;
-    flex: 1;
-    min-width: 80px;
+    padding: 10px 16px;
+    border-left: 3px solid var(--cyan);
   }
-  .price-asset { font-size: .6rem; letter-spacing: .15em; font-family: 'Share Tech Mono', monospace; text-transform: uppercase; margin-bottom: 3px; }
-  .price-val   { font-family: 'Share Tech Mono', monospace; font-size: .85rem; font-weight: 700; color: var(--txt); }
-  .price-refresh { display: flex; flex-direction: column; align-items: center; }
-  .price-refresh button {
-    background: var(--border2);
-    color: var(--cyan);
-    border: 1px solid var(--border2);
-    padding: 6px 12px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: .68rem;
-    border-radius: 3px;
-    cursor: pointer;
-    letter-spacing: .08em;
-    white-space: nowrap;
-  }
-  .price-refresh button:hover { background: var(--border); }
+  .pb-label { font-family:'Share Tech Mono',monospace; font-size:.62rem; letter-spacing:.2em; text-transform:uppercase; color:var(--silver); }
+  .pb-val   { font-family:'Share Tech Mono',monospace; font-size:1.4rem; font-weight:700; color:var(--cyan); }
 
-  .holdings-grid { display: flex; flex-direction: column; gap: 8px; }
-  .holding-row {
-    display: grid;
-    grid-template-columns: 80px 1fr 140px;
-    align-items: center;
-    gap: 12px;
+  /* OVERVIEW — 5 in a row */
+  .sum-five { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; }
+  .summary-card {
+    background:var(--bg2); border:1px solid var(--border); border-radius:5px;
+    padding:8px 6px; display:flex; flex-direction:column; align-items:center; gap:4px; text-align:center;
   }
-  .holding-label { font-family: 'Share Tech Mono', monospace; font-size: .75rem; font-weight: 700; }
+  .sum-asset  { font-size:.58rem; letter-spacing:.15em; color:var(--silver); font-family:'Share Tech Mono',monospace; text-transform:uppercase; }
+  .sum-signal { font-family:'Share Tech Mono',monospace; font-size:.95rem; font-weight:700; }
+  /* hide unused summary divs */
+  .sum-full { display:none !important; }
+  .sum-trio { display:none !important; }
+
+  /* MOMENTUM — 2x2 compact */
+  .momentum-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .mom-card {
+    background:var(--bg2); border:1px solid var(--border); border-radius:5px;
+    padding:10px 12px;
+  }
+  .mom-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+  .mom-name  { font-family:'Share Tech Mono',monospace; font-size:.68rem; font-weight:700; }
+  .mom-dir   { font-family:'Share Tech Mono',monospace; font-size:.62rem; font-weight:700; }
+  .mom-bar-wrap { background:var(--bg3); border-radius:2px; height:3px; margin-bottom:6px; position:relative; overflow:hidden; }
+  .mom-stats { display:flex; justify-content:space-between; align-items:center; }
+  .mom-val   { font-family:'Share Tech Mono',monospace; font-size:.78rem; font-weight:700; }
+  .mom-roc   { font-family:'Share Tech Mono',monospace; font-size:.68rem; }
+
+  /* DOM MAJOR */
+  .dom-card {
+    background:var(--bg2); border:1px solid var(--border); border-radius:5px;
+    padding:12px 14px; display:flex; align-items:center; justify-content:space-between;
+  }
+  .dom-name { font-family:'Share Tech Mono',monospace; font-size:1.5rem; font-weight:700; color:var(--orange); }
+  .dom-ratios { font-family:'Share Tech Mono',monospace; font-size:.62rem; color:var(--silver); line-height:1.9; text-align:right; }
+
+  /* SIGNAL CARDS */
+  .cards-two  { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .cards-four { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+
+  .script-card {
+    background:var(--bg2); border:1px solid var(--border); border-radius:5px;
+    overflow:hidden; transition:border-color .2s;
+  }
+  .script-card:hover { border-color:var(--cyan); box-shadow:0 0 12px rgba(0,204,255,.07); }
+  .card-header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 12px; border-bottom:1px solid var(--border);
+  }
+  .card-asset { display:flex; align-items:center; gap:8px; }
+  .asset-dot  { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .card-name  { font-size:.82rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; }
+  .card-signal { font-family:'Share Tech Mono',monospace; font-size:.62rem; font-weight:700; padding:3px 8px; border-radius:3px; letter-spacing:.08em; }
+  .sig-long    { background:rgba(0,255,102,.1); color:var(--lime); border:1px solid rgba(0,255,102,.4); }
+  .sig-short   { background:rgba(255,51,85,.1); color:var(--red); border:1px solid rgba(255,51,85,.4); }
+  .sig-neutral { background:rgba(122,138,176,.08); color:var(--silver); border:1px solid var(--border); }
+
+  .card-body  { padding:10px 12px; }
+  .sub-signals { display:flex; flex-direction:column; gap:4px; margin-bottom:10px; }
+  .sub-row     { display:flex; align-items:center; gap:4px; font-size:.68rem; }
+  .sub-row .sub-badge { margin-left:auto; }
+  .sub-label   { color:var(--silver); font-family:'Share Tech Mono',monospace; font-size:.62rem; white-space:nowrap; }
+  .cond-dot    { flex-shrink:0; width:10px; text-align:center; }
+  .sub-badge   { font-family:'Share Tech Mono',monospace; font-size:.6rem; padding:1px 0; border-radius:2px; width:46px; text-align:center; display:inline-block; }
+
+  .perf-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; border-top:1px solid var(--border); padding-top:8px; }
+  .perf-item { text-align:center; }
+  .perf-val  { font-family:'Share Tech Mono',monospace; font-size:.75rem; font-weight:700; display:block; }
+  .perf-lbl  { font-size:.55rem; color:var(--silver); letter-spacing:.06em; text-transform:uppercase; }
+
+  /* CHARTS side by side */
+  .charts-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .chart-box  { background:var(--bg2); border:1px solid var(--border); border-radius:5px; padding:12px 12px 8px; }
+  .chart-legend { display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; }
+  .chart-legend span { font-family:'Share Tech Mono',monospace; font-size:.58rem; }
+
+  /* FLIP LOG */
+  .flip-log { background:var(--bg2); border:1px solid var(--border); border-radius:5px; overflow:hidden; }
+  .flip-log-header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:7px 12px; background:var(--bg3); border-bottom:1px solid var(--border);
+    font-family:'Share Tech Mono',monospace; font-size:.65rem; color:var(--silver);
+    letter-spacing:.1em; text-transform:uppercase;
+  }
+  .flip-entries { max-height:130px; overflow-y:auto; }
+  .flip-entry {
+    display:grid; grid-template-columns:55px 70px 1fr 110px;
+    align-items:center; padding:5px 12px; border-bottom:1px solid var(--border);
+    font-size:.68rem; gap:8px;
+  }
+  .flip-entry:last-child { border-bottom:none; }
+  .flip-time { font-family:'Share Tech Mono',monospace; font-size:.6rem; color:var(--dim); }
+  .flip-msg  { color:var(--silver); font-size:.65rem; }
+
+  /* PORTFOLIO compact */
+  .portfolio-box { background:var(--bg2); border:1px solid var(--border); border-radius:5px; padding:12px; }
+  .price-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:6px; margin-bottom:8px; }
+  .price-card {
+    background:var(--bg3); border:1px solid var(--border); border-radius:4px;
+    padding:6px 8px; text-align:center;
+  }
+  .price-asset { font-size:.55rem; letter-spacing:.12em; font-family:'Share Tech Mono',monospace; text-transform:uppercase; margin-bottom:2px; }
+  .price-val   { font-family:'Share Tech Mono',monospace; font-size:.75rem; font-weight:700; color:var(--txt); }
+  .holdings-grid { display:flex; flex-direction:column; gap:5px; }
+  .holding-row { display:grid; grid-template-columns:64px 1fr 120px; align-items:center; gap:10px; }
+  .holding-label { font-family:'Share Tech Mono',monospace; font-size:.68rem; font-weight:700; }
   .holding-input {
-    background: var(--bg3);
-    border: 1px solid var(--border2);
-    color: var(--txt);
-    padding: 6px 10px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: .8rem;
-    border-radius: 3px;
-    outline: none;
-    width: 100%;
+    background:var(--bg3); border:1px solid var(--border2); color:var(--txt);
+    padding:4px 8px; font-family:'Share Tech Mono',monospace; font-size:.72rem;
+    border-radius:3px; outline:none; width:100%;
   }
-  .holding-input:focus { border-color: var(--cyan); }
-  .holding-val {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: .78rem;
-    color: var(--silver);
-    text-align: right;
-  }
+  .holding-input:focus { border-color:var(--cyan); }
+  .holding-val { font-family:'Share Tech Mono',monospace; font-size:.7rem; color:var(--silver); text-align:right; }
+  .holdings-view-grid { display:flex; flex-direction:column; gap:5px; }
+  .hv-row { display:grid; grid-template-columns:64px 1fr 120px; align-items:center; gap:10px; padding:4px 0; border-bottom:1px solid var(--border); }
+  .hv-row:last-child { border-bottom:none; }
+  .hv-asset { font-family:'Share Tech Mono',monospace; font-size:.68rem; font-weight:700; }
+  .hv-qty   { font-family:'Share Tech Mono',monospace; font-size:.7rem; color:var(--txt); }
+  .hv-usd   { font-family:'Share Tech Mono',monospace; font-size:.7rem; color:var(--silver); text-align:right; }
   .portfolio-total {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 14px;
-    padding-top: 14px;
-    border-top: 1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between;
+    margin-top:10px; padding-top:10px; border-top:1px solid var(--border);
   }
-  .total-val {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--cyan);
+  .total-val { font-family:'Share Tech Mono',monospace; font-size:1.1rem; font-weight:700; color:var(--cyan); }
+
+  /* EQUITY CHART */
+  .equity-box { background:var(--bg2); border:1px solid var(--border); border-radius:5px; padding:12px 12px 8px; }
+
+  /* FOOTER */
+  .footer {
+    padding:8px 28px; border-top:1px solid var(--border);
+    font-family:'Share Tech Mono',monospace; font-size:.6rem; color:var(--dim);
+    display:flex; align-items:center; justify-content:space-between;
   }
 
-  @media (max-width: 600px) {
-    .holding-row { grid-template-columns: 60px 1fr 110px; gap: 8px; }
-    .holding-val { font-size: .68rem; }
-    .price-card  { padding: 6px 8px; min-width: 60px; }
-    .price-val   { font-size: .75rem; }
-    .total-val   { font-size: 1rem; }
-  }
+  @keyframes flash { 0%{background:rgba(0,229,255,.1)} 100%{background:transparent} }
+  .flash { animation:flash .6s ease; }
+  ::-webkit-scrollbar { width:4px; }
+  ::-webkit-scrollbar-track { background:var(--bg); }
+  ::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
 
+  /* hide mobile-only dividers */
+  .divider { display:none; }
+  .card-full { display:contents; }
+  .card-trio { display:contents; }
+
+  /* privacy */
+  .privacy-hidden { filter: blur(5px); user-select:none; pointer-events:none; }
 </style>
 </head>
 <body>
@@ -470,242 +351,189 @@
 <div class="header">
   <div class="header-title">Private Mission Control Center</div>
   <div class="header-right">
-    <button id="privacyBtn" onclick="togglePrivacy()" style="background:transparent;border:1px solid var(--border2);color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:.6rem;padding:4px 8px;border-radius:3px;cursor:pointer;letter-spacing:.08em" title="Hide sensitive data">👁 SHOW</button>
-    <button onclick="logout()" style="background:transparent;border:1px solid var(--border2);color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:.6rem;padding:4px 8px;border-radius:3px;cursor:pointer;letter-spacing:.08em" title="Disconnect server">⏏ DISCONNECT</button>
-    <span><span class="live-dot" id="liveDot"></span><span id="statusText">DEMO</span></span>
+    <span><span class="live-dot" id="liveDot"></span><span id="statusText">CONNECTING</span></span>
     <div class="countdown-box">
-      <span class="countdown-label">CANDLE CLOSE</span>
+      <span class="countdown-label">UTC CLOSE</span>
       <span class="countdown-val" id="countdown">--:--:--</span>
     </div>
     <span id="clock">--:--:--</span>
     <span id="lastUpdate" style="color:var(--dim)">—</span>
+    <button id="privacyBtn" onclick="togglePrivacy()" style="background:var(--bg3);border:1px solid var(--border2);color:var(--silver);padding:3px 10px;font-family:'Share Tech Mono',monospace;font-size:.65rem;border-radius:3px;cursor:pointer;letter-spacing:.05em">👁 SHOW</button>
   </div>
 </div>
 
-<div class="main">
+<!-- DESKTOP LAYOUT -->
+<div class="desktop-wrapper">
 
-  <!-- PORTFOLIO VALUE BANNER -->
-  <div class="portfolio-banner">
-    <span class="pb-label">Portfolio Value</span>
-    <span class="pb-val" id="portfolioBanner">— USD</span>
-  </div>
+  <!-- ═══ LEFT COLUMN ═══ -->
+  <div class="col-left">
 
-  <!-- DOM MAJOR -->
-  <div id="domMajorSection">
-    <div class="section-title">Dominant Major</div>
-    <div id="domMajorCard" style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;">
-      <div>
-        <div style="font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:.2em;color:var(--silver);text-transform:uppercase;margin-bottom:6px">Strongest Token</div>
-        <div id="domMajorName" style="font-family:'Share Tech Mono',monospace;font-size:2rem;font-weight:700;color:var(--orange)">BTC</div>
-      </div>
-      <div style="text-align:right">
-        <div style="font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px">Ratio States</div>
-        <div id="domRatioStates" style="font-family:'Share Tech Mono',monospace;font-size:.72rem;color:var(--silver);line-height:1.8">
+    <!-- Portfolio Value -->
+    <div class="portfolio-banner">
+      <span class="pb-label">Portfolio Value</span>
+      <span class="pb-val" id="portfolioBanner">— USD</span>
+    </div>
+
+    <!-- Overview -->
+    <div>
+      <div class="section-title">Overview</div>
+      <div class="sum-five" id="sumFive"></div>
+      <div style="display:none" id="sumTop"></div>
+      <div style="display:none" id="sumMid"></div>
+      <div style="display:none" id="sumBot"></div>
+    </div>
+
+    <!-- Dominant Major -->
+    <div id="domMajorSection">
+      <div class="section-title">Dominant Major</div>
+      <div class="dom-card" id="domMajorCard">
+        <div>
+          <div style="font-family:'Share Tech Mono',monospace;font-size:.58rem;letter-spacing:.2em;color:var(--silver);text-transform:uppercase;margin-bottom:4px">Strongest</div>
+          <div id="domMajorName" style="font-family:'Share Tech Mono',monospace;font-size:1.5rem;font-weight:700;color:var(--orange)">BTC</div>
+        </div>
+        <div id="domRatioStates" style="font-family:'Share Tech Mono',monospace;font-size:.62rem;color:var(--silver);line-height:1.9;text-align:right">
           ETH/BTC: —<br>SOL/BTC: —<br>SOL/ETH: —
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- SUMMARY -->
-  <div>
-    <div class="section-title">Overview</div>
-    <div class="summary-row">
-      <div class="sum-full" id="sumTop"></div>
-      <div class="sum-trio" id="sumMid"></div>
-      <div class="sum-full" id="sumBot"></div>
+    <!-- Asset Momentum -->
+    <div>
+      <div class="section-title">Asset Momentum</div>
+      <div class="momentum-grid" id="momentumGrid"></div>
     </div>
-  </div>
 
-  <!-- MOMENTUM -->
-  <div>
-    <div class="section-title">Asset Momentum</div>
-    <div id="momentumGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px"></div>
-  </div>
-
-  <!-- CARDS -->
-  <div>
-    <div class="section-title">Signals & Performance</div>
-    <!-- LTPI — full width -->
-    <div class="card-full" id="cardsTop"></div>
-    <!-- BTC ETH SOL — trio -->
-    <div class="card-trio" id="cardsMid" style="margin-top:16px"></div>
-    <!-- divider -->
-    <div class="divider" style="margin-top:20px"></div>
-    <!-- GOLD — full width -->
-    <div class="card-full" id="cardsBot" style="margin-top:20px"></div>
-  </div>
-
-  <!-- SIGNAL HISTORY CHART -->
-  <div>
-    <div class="section-title">Signal History — Daily</div>
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:16px 16px 10px;">
-      <canvas id="signalChart" style="width:100%;height:200px;display:block;"></canvas>
-      <div style="display:flex;gap:16px;margin-top:10px;flex-wrap:wrap;font-family:'Share Tech Mono',monospace;font-size:.65rem;">
-        <span style="color:#22c55e">● LTPI</span>
-        <span style="color:#ff9500">● BTC</span>
-        <span style="color:#00aaff">● ETH</span>
-        <span style="color:#9945ff">● SOL</span>
-        <span style="color:#ffd60a">● GOLD</span>
-        <span style="color:var(--dim);margin-left:auto;font-size:.6rem">Stored in browser · grows daily</span>
+    <!-- Flip Log -->
+    <div>
+      <div class="section-title">Flip Alert Log</div>
+      <div class="flip-log">
+        <div class="flip-log-header">
+          <span>📡 Signal Flips</span>
+          <span id="flipCount" style="color:var(--teal)">0 entries</span>
+        </div>
+        <div class="flip-entries" id="flipEntries">
+          <div style="padding:16px;text-align:center;color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:.68rem">No flips yet</div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- FLIP LOG -->
-  <div>
-    <div class="section-title">Flip Alert Log</div>
-    <div class="flip-log">
-      <div class="flip-log-header">
-        <span>📡 Latest Signal Flips</span>
-        <span id="flipCount" style="color:var(--teal)">0 entries</span>
-      </div>
-      <div class="flip-entries" id="flipEntries">
-        <div style="padding:20px;text-align:center;color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:.72rem">No flips received yet</div>
+    <!-- Portfolio -->
+    <div>
+      <div class="section-title">Portfolio</div>
+      <div class="portfolio-box">
+        <div style="margin-bottom:8px">
+          <button onclick="fetchPrices()" id="priceRefreshBtn" style="width:100%;padding:6px;background:var(--border2);color:var(--cyan);border:1px solid var(--border2);border-radius:4px;font-family:'Share Tech Mono',monospace;font-size:.65rem;letter-spacing:.1em;cursor:pointer">↻ REFRESH PRICES</button>
+          <span id="priceTime" style="color:var(--dim);font-size:.58rem;display:block;margin-top:3px;text-align:center">—</span>
+        </div>
+        <!-- Price grid: all 12 in 4 columns x 3 rows -->
+        <div class="price-grid" style="grid-template-columns:repeat(4,1fr)">
+          <div class="price-card"><div class="price-asset" style="color:#2775ca">USDC</div><div class="price-val" id="pr-usdc">$1.00</div></div>
+          <div class="price-card"><div class="price-asset" style="color:#ff9500">BTC</div><div class="price-val" id="pr-btc">—</div></div>
+          <div class="price-card"><div class="price-asset" style="color:#00aaff">ETH</div><div class="price-val" id="pr-eth">—</div></div>
+          <div class="price-card"><div class="price-asset" style="color:#9945ff">SOL</div><div class="price-val" id="pr-sol">—</div></div>
+          <div class="price-card"><div class="price-asset" style="color:#ffd60a">PAXG</div><div class="price-val" id="pr-gold">—</div></div>
+          <div class="price-card"><div class="price-asset" style="color:#f3ba2f">BNB</div><div class="price-val" id="pr-bnb">—</div></div>
+          <div class="price-card"><div class="price-asset" style="color:#c2a633">DOGE</div><div class="price-val" id="pr-doge">—</div></div>
+          <div class="price-card"><div class="price-asset" style="color:#0033ad">ADA</div><div class="price-val" id="pr-ada">—</div></div>
+          <div class="price-card"><div class="price-asset" style="color:#00ff88">HYPE</div><div class="price-val" id="pr-hype">—</div></div>
+          <div class="price-card"><div class="price-asset" style="color:#375bd2">LINK</div><div class="price-val" id="pr-link">—</div></div>
+          <div class="price-card"><div class="price-asset" style="color:#6fbcf0">SUI</div><div class="price-val" id="pr-sui">—</div></div>
+          <div class="price-card"><div class="price-asset" style="color:#00aae4">XRP</div><div class="price-val" id="pr-xrp">—</div></div>
+        </div>
+        <div style="height:1px;background:var(--border);margin:10px 0;opacity:.5"></div>
+        <!-- Edit mode -->
+        <div class="holdings-grid" id="holdingsEdit" style="display:none">
+          <div class="holding-row"><div class="holding-label" style="color:#2775ca">USDC</div><input class="holding-input" id="h-usdc" type="number" min="0" step="1" placeholder="0" oninput="calcPortfolio()"><div class="holding-val" id="hv-usdc">—</div></div>
+          <div class="holding-row"><div class="holding-label" style="color:#ff9500">BTC</div><input class="holding-input" id="h-btc" type="number" min="0" step="0.0001" placeholder="0" oninput="calcPortfolio()"><div class="holding-val" id="hv-btc">—</div></div>
+          <div class="holding-row"><div class="holding-label" style="color:#00aaff">ETH</div><input class="holding-input" id="h-eth" type="number" min="0" step="0.001" placeholder="0" oninput="calcPortfolio()"><div class="holding-val" id="hv-eth">—</div></div>
+          <div class="holding-row"><div class="holding-label" style="color:#9945ff">SOL</div><input class="holding-input" id="h-sol" type="number" min="0" step="0.01" placeholder="0" oninput="calcPortfolio()"><div class="holding-val" id="hv-sol">—</div></div>
+          <div class="holding-row"><div class="holding-label" style="color:#ffd60a">PAXG</div><input class="holding-input" id="h-gold" type="number" min="0" step="0.0001" placeholder="0" oninput="calcPortfolio()"><div class="holding-val" id="hv-gold">—</div></div>
+          <div style="height:1px;background:var(--border);margin:4px 0;opacity:.4"></div>
+          <div class="holding-row"><div class="holding-label" style="color:#f3ba2f">BNB</div><input class="holding-input" id="h-bnb" type="number" min="0" step="0.001" placeholder="0" oninput="calcPortfolio()"><div class="holding-val" id="hv-bnb">—</div></div>
+          <div class="holding-row"><div class="holding-label" style="color:#c2a633">DOGE</div><input class="holding-input" id="h-doge" type="number" min="0" step="1" placeholder="0" oninput="calcPortfolio()"><div class="holding-val" id="hv-doge">—</div></div>
+          <div class="holding-row"><div class="holding-label" style="color:#0033ad">ADA</div><input class="holding-input" id="h-ada" type="number" min="0" step="1" placeholder="0" oninput="calcPortfolio()"><div class="holding-val" id="hv-ada">—</div></div>
+          <div class="holding-row"><div class="holding-label" style="color:#00ff88">HYPE</div><input class="holding-input" id="h-hype" type="number" min="0" step="0.01" placeholder="0" oninput="calcPortfolio()"><div class="holding-val" id="hv-hype">—</div></div>
+          <div class="holding-row"><div class="holding-label" style="color:#375bd2">LINK</div><input class="holding-input" id="h-link" type="number" min="0" step="0.01" placeholder="0" oninput="calcPortfolio()"><div class="holding-val" id="hv-link">—</div></div>
+          <div class="holding-row"><div class="holding-label" style="color:#6fbcf0">SUI</div><input class="holding-input" id="h-sui" type="number" min="0" step="0.01" placeholder="0" oninput="calcPortfolio()"><div class="holding-val" id="hv-sui">—</div></div>
+          <div class="holding-row"><div class="holding-label" style="color:#00aae4">XRP</div><input class="holding-input" id="h-xrp" type="number" min="0" step="1" placeholder="0" oninput="calcPortfolio()"><div class="holding-val" id="hv-xrp">—</div></div>
+        </div>
+        <!-- View mode -->
+        <div id="holdingsView" style="display:none">
+          <div class="holdings-view-grid">
+            <div class="hv-row"><span class="hv-asset" style="color:#2775ca">USDC</span><span class="hv-qty" id="vq-usdc">—</span><span class="hv-usd" id="vu-usdc">—</span></div>
+            <div class="hv-row"><span class="hv-asset" style="color:#ff9500">BTC</span><span class="hv-qty" id="vq-btc">—</span><span class="hv-usd" id="vu-btc">—</span></div>
+            <div class="hv-row"><span class="hv-asset" style="color:#00aaff">ETH</span><span class="hv-qty" id="vq-eth">—</span><span class="hv-usd" id="vu-eth">—</span></div>
+            <div class="hv-row"><span class="hv-asset" style="color:#9945ff">SOL</span><span class="hv-qty" id="vq-sol">—</span><span class="hv-usd" id="vu-sol">—</span></div>
+            <div class="hv-row"><span class="hv-asset" style="color:#ffd60a">PAXG</span><span class="hv-qty" id="vq-gold">—</span><span class="hv-usd" id="vu-gold">—</span></div>
+            <div class="hv-row" style="border-top:1px solid var(--border);margin-top:3px;padding-top:6px"><span class="hv-asset" style="color:#f3ba2f">BNB</span><span class="hv-qty" id="vq-bnb">—</span><span class="hv-usd" id="vu-bnb">—</span></div>
+            <div class="hv-row"><span class="hv-asset" style="color:#c2a633">DOGE</span><span class="hv-qty" id="vq-doge">—</span><span class="hv-usd" id="vu-doge">—</span></div>
+            <div class="hv-row"><span class="hv-asset" style="color:#0033ad">ADA</span><span class="hv-qty" id="vq-ada">—</span><span class="hv-usd" id="vu-ada">—</span></div>
+            <div class="hv-row"><span class="hv-asset" style="color:#00ff88">HYPE</span><span class="hv-qty" id="vq-hype">—</span><span class="hv-usd" id="vu-hype">—</span></div>
+            <div class="hv-row"><span class="hv-asset" style="color:#375bd2">LINK</span><span class="hv-qty" id="vq-link">—</span><span class="hv-usd" id="vu-link">—</span></div>
+            <div class="hv-row"><span class="hv-asset" style="color:#6fbcf0">SUI</span><span class="hv-qty" id="vq-sui">—</span><span class="hv-usd" id="vu-sui">—</span></div>
+            <div class="hv-row"><span class="hv-asset" style="color:#00aae4">XRP</span><span class="hv-qty" id="vq-xrp">—</span><span class="hv-usd" id="vu-xrp">—</span></div>
+          </div>
+        </div>
+        <div class="portfolio-total">
+          <span style="color:var(--silver);font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;font-family:'Share Tech Mono',monospace">Total Value</span>
+          <span class="total-val" id="portfolioTotal">— USD</span>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- PORTFOLIO -->
-  <!-- EQUITY CURVE -->
-  <div>
-    <div class="section-title">Equity Curve — Cumulative %</div>
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:16px 16px 10px;">
-      <canvas id="equityChart" style="width:100%;height:220px;display:block;"></canvas>
-      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;justify-content:center">
-        <span style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:#22c55e">● LTPI</span>
-        <span style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:#ff9500">● BTC</span>
-        <span style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:#00aaff">● ETH</span>
-        <span style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:#9945ff">● SOL</span>
-        <span style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:#ffd60a">● GOLD</span>
+    <!-- Total Value Banner — full width sticky bottom -->
+    <div style="margin-top:auto;padding-top:14px;border-top:1px solid var(--border)">
+      <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:5px;padding:12px 16px;border-left:3px solid var(--cyan);display:flex;align-items:center;justify-content:space-between">
+        <span style="font-family:'Share Tech Mono',monospace;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--silver)">Total Portfolio Value</span>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:1.4rem;font-weight:700;color:var(--cyan)" id="portfolioTotalDesktop">— USD</span>
       </div>
     </div>
-  </div>
 
-  <div>
-    <div class="section-title">Portfolio</div>
-    <div class="portfolio-box">
-      <!-- REFRESH BUTTON — full width -->
-      <div style="margin-bottom:10px">
-        <button onclick="fetchPrices()" id="priceRefreshBtn" style="width:100%;padding:8px;background:var(--border2);color:var(--cyan);border:1px solid var(--border2);border-radius:5px;font-family:'Share Tech Mono',monospace;font-size:.7rem;letter-spacing:.1em;cursor:pointer">↻ REFRESH PRICES</button>
-        <span id="priceTime" style="color:var(--dim);font-size:.6rem;display:block;margin-top:4px;text-align:center">—</span>
-      </div>
-      <!-- PRICES: Row 1 — USDC · BTC · ETH -->
-      <div class="price-row" style="margin-bottom:8px">
-        <div class="price-card"><div class="price-asset" style="color:#2775ca">USDC</div><div class="price-val" id="pr-usdc">$1.00</div></div>
-        <div class="price-card"><div class="price-asset" style="color:#ff9500">BTC</div><div class="price-val" id="pr-btc">—</div></div>
-        <div class="price-card"><div class="price-asset" style="color:#00aaff">ETH</div><div class="price-val" id="pr-eth">—</div></div>
-      </div>
-      <!-- PRICES: Row 2 — SOL · PAXG · BNB -->
-      <div class="price-row" style="margin-bottom:8px">
-        <div class="price-card"><div class="price-asset" style="color:#9945ff">SOL</div><div class="price-val" id="pr-sol">—</div></div>
-        <div class="price-card"><div class="price-asset" style="color:#ffd60a">PAXG</div><div class="price-val" id="pr-gold">—</div></div>
-        <div class="price-card"><div class="price-asset" style="color:#f3ba2f">BNB</div><div class="price-val" id="pr-bnb">—</div></div>
-      </div>
-      <!-- PRICES: Row 3 — DOGE · ADA · HYPE -->
-      <div class="price-row" style="margin-bottom:8px">
-        <div class="price-card"><div class="price-asset" style="color:#c2a633">DOGE</div><div class="price-val" id="pr-doge">—</div></div>
-        <div class="price-card"><div class="price-asset" style="color:#0033ad">ADA</div><div class="price-val" id="pr-ada">—</div></div>
-        <div class="price-card"><div class="price-asset" style="color:#00ff88">HYPE</div><div class="price-val" id="pr-hype">—</div></div>
-      </div>
-      <!-- PRICES: Row 4 — LINK · SUI · XRP -->
-      <div class="price-row">
-        <div class="price-card"><div class="price-asset" style="color:#375bd2">LINK</div><div class="price-val" id="pr-link">—</div></div>
-        <div class="price-card"><div class="price-asset" style="color:#6fbcf0">SUI</div><div class="price-val" id="pr-sui">—</div></div>
-        <div class="price-card"><div class="price-asset" style="color:#00aae4">XRP</div><div class="price-val" id="pr-xrp">—</div></div>
-      </div>
-      <div style="height:1px;background:var(--border);margin:14px 0;opacity:.5"></div>
+  </div><!-- end col-left -->
 
-      <!-- EDIT MODE (nur mit Token) -->
-      <div class="holdings-grid" id="holdingsEdit" style="display:none">
-        <div class="holding-row">
-          <div class="holding-label" style="color:#2775ca">USDC</div>
-          <input class="holding-input" id="h-usdc" type="number" min="0" step="1" placeholder="0" oninput="calcPortfolio()">
-          <div class="holding-val" id="hv-usdc">—</div>
-        </div>
-        <div class="holding-row">
-          <div class="holding-label" style="color:#ff9500">BTC</div>
-          <input class="holding-input" id="h-btc" type="number" min="0" step="0.0001" placeholder="0" oninput="calcPortfolio()">
-          <div class="holding-val" id="hv-btc">—</div>
-        </div>
-        <div class="holding-row">
-          <div class="holding-label" style="color:#00aaff">ETH</div>
-          <input class="holding-input" id="h-eth" type="number" min="0" step="0.001" placeholder="0" oninput="calcPortfolio()">
-          <div class="holding-val" id="hv-eth">—</div>
-        </div>
-        <div class="holding-row">
-          <div class="holding-label" style="color:#9945ff">SOL</div>
-          <input class="holding-input" id="h-sol" type="number" min="0" step="0.01" placeholder="0" oninput="calcPortfolio()">
-          <div class="holding-val" id="hv-sol">—</div>
-        </div>
-        <div class="holding-row">
-          <div class="holding-label" style="color:#ffd60a">PAXG</div>
-          <input class="holding-input" id="h-gold" type="number" min="0" step="0.0001" placeholder="0" oninput="calcPortfolio()">
-          <div class="holding-val" id="hv-gold">—</div>
-        </div>
-        <div style="height:1px;background:var(--border);margin:6px 0;opacity:.4"></div>
-        <div class="holding-row">
-          <div class="holding-label" style="color:#f3ba2f">BNB</div>
-          <input class="holding-input" id="h-bnb" type="number" min="0" step="0.001" placeholder="0" oninput="calcPortfolio()">
-          <div class="holding-val" id="hv-bnb">—</div>
-        </div>
-        <div class="holding-row">
-          <div class="holding-label" style="color:#c2a633">DOGE</div>
-          <input class="holding-input" id="h-doge" type="number" min="0" step="1" placeholder="0" oninput="calcPortfolio()">
-          <div class="holding-val" id="hv-doge">—</div>
-        </div>
-        <div class="holding-row">
-          <div class="holding-label" style="color:#0033ad">ADA</div>
-          <input class="holding-input" id="h-ada" type="number" min="0" step="1" placeholder="0" oninput="calcPortfolio()">
-          <div class="holding-val" id="hv-ada">—</div>
-        </div>
-        <div class="holding-row">
-          <div class="holding-label" style="color:#00ff88">HYPE</div>
-          <input class="holding-input" id="h-hype" type="number" min="0" step="0.01" placeholder="0" oninput="calcPortfolio()">
-          <div class="holding-val" id="hv-hype">—</div>
-        </div>
-        <div class="holding-row">
-          <div class="holding-label" style="color:#375bd2">LINK</div>
-          <input class="holding-input" id="h-link" type="number" min="0" step="0.01" placeholder="0" oninput="calcPortfolio()">
-          <div class="holding-val" id="hv-link">—</div>
-        </div>
-        <div class="holding-row">
-          <div class="holding-label" style="color:#6fbcf0">SUI</div>
-          <input class="holding-input" id="h-sui" type="number" min="0" step="0.01" placeholder="0" oninput="calcPortfolio()">
-          <div class="holding-val" id="hv-sui">—</div>
-        </div>
-        <div class="holding-row">
-          <div class="holding-label" style="color:#00aae4">XRP</div>
-          <input class="holding-input" id="h-xrp" type="number" min="0" step="1" placeholder="0" oninput="calcPortfolio()">
-          <div class="holding-val" id="hv-xrp">—</div>
-        </div>
-      </div>
+  <!-- ═══ RIGHT COLUMN ═══ -->
+  <div class="col-right">
 
-      <!-- VIEW MODE (ohne Token) -->
-      <div id="holdingsView" style="display:none">
-        <div class="holdings-view-grid">
-          <div class="hv-row"><span class="hv-asset" style="color:#2775ca">USDC</span><span class="hv-qty" id="vq-usdc">—</span><span class="hv-usd" id="vu-usdc">—</span></div>
-          <div class="hv-row"><span class="hv-asset" style="color:#ff9500">BTC</span><span class="hv-qty" id="vq-btc">—</span><span class="hv-usd" id="vu-btc">—</span></div>
-          <div class="hv-row"><span class="hv-asset" style="color:#00aaff">ETH</span><span class="hv-qty" id="vq-eth">—</span><span class="hv-usd" id="vu-eth">—</span></div>
-          <div class="hv-row"><span class="hv-asset" style="color:#9945ff">SOL</span><span class="hv-qty" id="vq-sol">—</span><span class="hv-usd" id="vu-sol">—</span></div>
-          <div class="hv-row"><span class="hv-asset" style="color:#ffd60a">PAXG</span><span class="hv-qty" id="vq-gold">—</span><span class="hv-usd" id="vu-gold">—</span></div>
-          <div class="hv-row" style="border-top:1px solid var(--border);margin-top:4px;padding-top:8px"><span class="hv-asset" style="color:#f3ba2f">BNB</span><span class="hv-qty" id="vq-bnb">—</span><span class="hv-usd" id="vu-bnb">—</span></div>
-          <div class="hv-row"><span class="hv-asset" style="color:#c2a633">DOGE</span><span class="hv-qty" id="vq-doge">—</span><span class="hv-usd" id="vu-doge">—</span></div>
-          <div class="hv-row"><span class="hv-asset" style="color:#0033ad">ADA</span><span class="hv-qty" id="vq-ada">—</span><span class="hv-usd" id="vu-ada">—</span></div>
-          <div class="hv-row"><span class="hv-asset" style="color:#00ff88">HYPE</span><span class="hv-qty" id="vq-hype">—</span><span class="hv-usd" id="vu-hype">—</span></div>
-          <div class="hv-row"><span class="hv-asset" style="color:#375bd2">LINK</span><span class="hv-qty" id="vq-link">—</span><span class="hv-usd" id="vu-link">—</span></div>
-          <div class="hv-row"><span class="hv-asset" style="color:#6fbcf0">SUI</span><span class="hv-qty" id="vq-sui">—</span><span class="hv-usd" id="vu-sui">—</span></div>
-          <div class="hv-row"><span class="hv-asset" style="color:#00aae4">XRP</span><span class="hv-qty" id="vq-xrp">—</span><span class="hv-usd" id="vu-xrp">—</span></div>
+    <!-- Signals & Performance — 2x2 grid + LTPI full top, GOLD full bottom -->
+    <div>
+      <div class="section-title">Signals & Performance</div>
+      <!-- LTPI full width -->
+      <div id="cardsTop" style="margin-bottom:10px"></div>
+      <!-- BTC ETH SOL GOLD in 2x2 -->
+      <div class="cards-four" id="cardsMid"></div>
+      <div style="display:none" id="cardsBot"></div>
+    </div>
+
+    <!-- Charts side by side -->
+    <div class="charts-row">
+      <div class="chart-box">
+        <div class="section-title">Signal History — Daily</div>
+        <canvas id="signalChart" style="width:100%;height:200px;display:block;"></canvas>
+        <div class="chart-legend">
+          <span style="color:#22c55e">● LTPI</span>
+          <span style="color:#ff9500">● BTC</span>
+          <span style="color:#00aaff">● ETH</span>
+          <span style="color:#9945ff">● SOL</span>
+          <span style="color:#ffd60a">● GOLD</span>
+          <span style="color:var(--dim);margin-left:auto;font-size:.55rem">Stored in browser · grows daily</span>
         </div>
       </div>
-      <div class="portfolio-total">
-        <span style="color:var(--silver);font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;font-family:'Share Tech Mono',monospace">Total Value</span>
-        <span class="total-val" id="portfolioTotal">— USD</span>
+      <div class="chart-box">
+        <div class="section-title">Equity Curve — Cumulative %</div>
+        <canvas id="equityChart" style="width:100%;height:200px;display:block;"></canvas>
+        <div class="chart-legend">
+          <span style="color:#22c55e">● LTPI</span>
+          <span style="color:#ff9500">● BTC</span>
+          <span style="color:#00aaff">● ETH</span>
+          <span style="color:#9945ff">● SOL</span>
+          <span style="color:#ffd60a">● GOLD</span>
+        </div>
       </div>
     </div>
-  </div>
 
-</div>
+  </div><!-- end col-right -->
+
+</div><!-- end desktop-wrapper -->
 
 <div class="footer">
   <span>© MrBalantine</span>
@@ -955,8 +783,8 @@ function makeCard(s) {
 
 function renderCards() {
   document.getElementById('cardsTop').innerHTML = makeCard(SCRIPTS.find(s => s.id === 'ltpi'));
-  document.getElementById('cardsMid').innerHTML = ['btc','eth','sol'].map(id => makeCard(SCRIPTS.find(s => s.id === id))).join('');
-  document.getElementById('cardsBot').innerHTML = makeCard(SCRIPTS.find(s => s.id === 'gold'));
+  document.getElementById('cardsMid').innerHTML = ['btc','eth','sol','gold'].map(id => makeCard(SCRIPTS.find(s => s.id === id))).join('');
+  document.getElementById('cardsBot').innerHTML = '';
 }
 
 function renderFlips() {
@@ -1233,6 +1061,8 @@ function calcPortfolio() {
   const total = Object.values(vals).reduce((a,b) => a+b, 0);
   const display = total > 0 ? fmtBig(total) + ' USD' : '— USD';
   document.getElementById('portfolioTotal').textContent = display;
+  const _dt = document.getElementById('portfolioTotalDesktop');
+  if (_dt) _dt.textContent = display;
   const _pb = document.getElementById('portfolioBanner');
   if (_pb) { _pb.dataset.real = display; _pb.textContent = privacyMode ? '••••••• USD' : display; }
 }
@@ -1606,6 +1436,71 @@ fetchData();
 setInterval(fetchData, 5000);
 setInterval(loadHoldingsFromServer, 30000);
 </script>
+
+<script>
+// ── DESKTOP OVERRIDES ────────────────────────────────────────────────────────
+// Override renderSummary to use sumFive instead of sumTop/sumMid/sumBot
+const _origRenderSummary = renderSummary;
+function renderSummary() {
+  const SCRIPTS = [
+    { id:'ltpi', label:'LTPI', color:'#22c55e' },
+    { id:'btc',  label:'BTC',  color:'#ff9500' },
+    { id:'eth',  label:'ETH',  color:'#0099ff' },
+    { id:'sol',  label:'SOL',  color:'#9945ff' },
+    { id:'gold', label:'GOLD', color:'#ffd60a' },
+  ];
+  const five = document.getElementById('sumFive');
+  if (!five) { _origRenderSummary(); return; }
+  five.innerHTML = SCRIPTS.map(s => {
+    const sig = state.signals[s.id] ?? 0;
+    const cls = sig === 1 ? 'sig-long' : sig === -1 ? 'sig-short' : 'sig-neutral';
+    const lbl = sig === 1 ? '▲ LONG' : sig === -1 ? '▼ SHORT' : '— WAIT';
+    return `<div class="summary-card">
+      <span class="sum-asset" style="color:${s.color}">${s.label}</span>
+      <span class="sum-signal ${cls}">${lbl}</span>
+    </div>`;
+  }).join('');
+}
+
+// Override renderMomentum for compact cards
+const _origRenderMomentum = renderMomentum;
+function renderMomentum() {
+  const assets = [
+    { id:'BTC',  color:'#ff9500' },
+    { id:'ETH',  color:'#00aaff' },
+    { id:'SOL',  color:'#9945ff' },
+    { id:'GOLD', color:'#ffd60a' },
+  ];
+  const rsi = state.momentum?.rsi || {};
+  const roc = state.momentum?.roc || {};
+  const grid = document.getElementById('momentumGrid');
+  if (!grid) return;
+  grid.innerHTML = assets.map(a => {
+    const rsiVal = rsi[a.id] ?? 50;
+    const rocVal = roc[a.id] ?? 0;
+    const dir    = rsiVal >= 50 ? 'LONG' : 'SHORT';
+    const dirCol = rsiVal >= 50 ? 'var(--lime)' : 'var(--red)';
+    const rocCol = rocVal >= 0  ? 'var(--lime)' : 'var(--red)';
+    const rocSign= rocVal >= 0  ? '+' : '';
+    const fillW  = Math.abs(rsiVal - 50) * 2;
+    return `<div class="mom-card" style="border-top:2px solid ${a.color}">
+      <div class="mom-top">
+        <span class="mom-name" style="color:${a.color}">${a.id}</span>
+        <span class="mom-dir" style="color:${dirCol}">${dir}</span>
+      </div>
+      <div class="mom-bar-wrap">
+        <div style="position:absolute;left:50%;top:0;height:100%;width:1px;background:var(--border2)"></div>
+        <div style="position:absolute;${rsiVal>=50?'left:50%':'right:'+(100-rsiVal)+'%'};top:0;height:100%;width:${fillW/2}%;background:${rsiVal>=50?'#22c55e':'#ef4444'};opacity:.8"></div>
+      </div>
+      <div class="mom-stats">
+        <span style="font-family:'Share Tech Mono',monospace;font-size:.58rem;color:var(--dim)">Value <span class="mom-val" style="color:${dirCol}">${rsiVal.toFixed(1)}</span></span>
+        <span class="mom-roc" style="color:${rocCol}">${rocSign}${rocVal.toFixed(2)}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+</script>
+
 <script>
 // ── LOGIN ────────────────────────────────────────────────────────────────────
 const ACCESS_HASH = '3d1bf065f59b54866900a23ccfd372c227985f5921b0e5dec92f725b4a4c332b';
