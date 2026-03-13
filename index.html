@@ -504,6 +504,26 @@
   <div style="position:relative;z-index:2;margin-top:18px;font-family:'Share Tech Mono',monospace;font-size:.55rem;color:#3a4a70;letter-spacing:.15em">SECURE ACCESS · MrBalantine</div>
 </div>
 <script>
+
+// ── THEME TOGGLE ─────────────────────────────────────────────────────────────
+const THEME_KEY = 'mcc_theme';
+function applyTheme(theme) {
+  const btn = document.getElementById('themeBtn');
+  if (theme === 'light') {
+    document.body.classList.add('light-mode');
+    if (btn) btn.textContent = '☀ LIGHT';
+  } else {
+    document.body.classList.remove('light-mode');
+    if (btn) btn.textContent = '☾ DARK';
+  }
+  localStorage.setItem(THEME_KEY, theme);
+}
+function toggleTheme() {
+  const cur = localStorage.getItem(THEME_KEY) || 'dark';
+  applyTheme(cur === 'dark' ? 'light' : 'dark');
+}
+applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
+
 (function() {
   const canvas = document.getElementById('matrixCanvas');
   const ctx = canvas.getContext('2d');
@@ -1988,24 +2008,6 @@ async function initLogin() {
 }
 initLogin();
 
-// ── THEME TOGGLE ─────────────────────────────────────────────────────────────
-const THEME_KEY = 'mcc_theme';
-function applyTheme(theme) {
-  const btn = document.getElementById('themeBtn');
-  if (theme === 'light') {
-    document.body.classList.add('light-mode');
-    if (btn) btn.textContent = '☀ LIGHT';
-  } else {
-    document.body.classList.remove('light-mode');
-    if (btn) btn.textContent = '☾ DARK';
-  }
-  localStorage.setItem(THEME_KEY, theme);
-}
-function toggleTheme() {
-  const cur = localStorage.getItem(THEME_KEY) || 'dark';
-  applyTheme(cur === 'dark' ? 'light' : 'dark');
-}
-applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
 
 </script>
 </body>
