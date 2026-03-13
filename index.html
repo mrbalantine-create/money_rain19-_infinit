@@ -1485,8 +1485,10 @@ async function fetchPrices() {
     const priceUrl = PUBLIC_SERVER_URL
       ? PUBLIC_SERVER_URL + '/prices'
       : 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,pax-gold,binancecoin,dogecoin,cardano,hyperliquid,chainlink,sui,ripple&vs_currencies=usd';
-    const res = await fetch(priceUrl, { signal: AbortSignal.timeout(10000) });
+    const res = await fetch(priceUrl, { signal: AbortSignal.timeout(20000), cache: 'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     const d = await res.json();
+    if (d.error) throw new Error(d.error);
     prices.btc  = d.bitcoin?.usd        || null;
     prices.eth  = d.ethereum?.usd       || null;
     prices.sol  = d.solana?.usd         || null;
@@ -1515,7 +1517,9 @@ async function fetchPrices() {
     document.getElementById('priceTime').textContent = new Date().toLocaleTimeString('en-US');
     calcPortfolio();
   } catch(e) {
-    document.getElementById('priceTime').textContent = 'Fehler — retry in 15s';
+    const errTime = new Date().toLocaleTimeString('en-US');
+    document.getElementById('priceTime').textContent = 'Fehler ' + errTime + ' — retry 15s';
+    console.error('fetchPrices error:', e);
     setTimeout(fetchPrices, 15000);
   }
   if (btn) btn.textContent = '↻ PREISE';
