@@ -437,7 +437,7 @@
 
 <!-- LOGIN OVERLAY -->
 <div id="loginOverlay" style="position:fixed;inset:0;background:#000;z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;">
-  <canvas id="matrixCanvas" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.18"></canvas>
+  <canvas id="matrixCanvas" style="position:absolute;inset:0;width:100%;height:100%;opacity:0.75"></canvas>
   <div style="position:relative;z-index:2;background:rgba(8,12,20,0.92);border:1px solid #1a2540;border-radius:8px;padding:40px 36px;width:340px;max-width:90vw;text-align:center;backdrop-filter:blur(8px);">
     <div style="font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:.3em;color:#3a4a70;text-transform:uppercase;margin-bottom:6px">Mission Control Center</div>
     <div style="font-family:'Share Tech Mono',monospace;font-size:1.3rem;font-weight:700;color:#00ccff;letter-spacing:.15em;margin-bottom:28px">ACCESS CONTROL</div>
@@ -469,13 +469,13 @@
   resize();
   window.addEventListener('resize', resize);
   setInterval(() => {
-    ctx.fillStyle = 'rgba(0,0,0,0.05)';
+    ctx.fillStyle = 'rgba(0,0,0,0.04)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = '#00ff66';
     ctx.font = '14px Share Tech Mono, monospace';
     drops.forEach((y, i) => {
       const ch = chars[Math.floor(Math.random() * chars.length)];
-      ctx.fillStyle = y === 1 ? '#aaffcc' : '#00ff66';
+      ctx.fillStyle = y <= 2 ? '#ffffff' : '#00ff66';
       ctx.fillText(ch, i * 18, y * 18);
       if (y * 18 > canvas.height && Math.random() > 0.975) drops[i] = 0;
       drops[i]++;
