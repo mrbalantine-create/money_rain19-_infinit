@@ -435,7 +435,8 @@
   }
 
 
-  .notif-btn {
+  /* unified header buttons */
+  .hdr-btn {
     background: transparent;
     border: 1px solid var(--border2);
     color: var(--dim);
@@ -445,9 +446,12 @@
     border-radius: 3px;
     cursor: pointer;
     letter-spacing: .08em;
+    white-space: nowrap;
   }
-  .notif-btn.active { color: var(--lime); border-color: var(--lime); }
-  .notif-btn.denied { color: var(--red);  border-color: var(--red);  }
+  .hdr-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+  .notif-btn { } /* alias */
+  .notif-btn.active, .hdr-btn.notif-active { color: var(--lime); border-color: var(--lime); }
+  .notif-btn.denied,  .hdr-btn.notif-denied  { color: var(--red);  border-color: var(--red);  }
 
 
   /* ── LIGHT MODE ─────────────────────────────────────────── */
@@ -470,18 +474,17 @@
     --teal:   #00997a;
   }
   body.light-mode::before { display: none; }
-  .theme-btn {
-    background: transparent;
-    border: 1px solid var(--border2);
-    color: var(--dim);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: .6rem;
-    padding: 4px 8px;
-    border-radius: 3px;
-    cursor: pointer;
-    letter-spacing: .08em;
+
+  .theme-btn.light-active {
+    color: var(--gold);
+    border-color: var(--gold);
+    box-shadow: 0 0 8px rgba(255,204,0,.25);
   }
-  .theme-btn:hover { color: var(--cyan); border-color: var(--cyan); }
+  .theme-btn.dark-active {
+    color: var(--cyan);
+    border-color: var(--cyan);
+    box-shadow: 0 0 8px rgba(0,204,255,.25);
+  }
 
 </style>
 </head>
@@ -514,10 +517,10 @@ function applyTheme(theme) {
   const btn = document.getElementById('themeBtn');
   if (theme === 'light') {
     document.body.classList.add('light-mode');
-    if (btn) btn.textContent = '☀ LIGHT';
+    if (btn) { btn.textContent = '☀ LIGHT'; btn.classList.add('light-active'); btn.classList.remove('dark-active'); }
   } else {
     document.body.classList.remove('light-mode');
-    if (btn) btn.textContent = '☾ DARK';
+    if (btn) { btn.textContent = '☾ DARK'; btn.classList.add('dark-active'); btn.classList.remove('light-active'); }
   }
   localStorage.setItem(THEME_KEY, theme);
 }
@@ -572,10 +575,10 @@ applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
 <div class="header">
   <div class="header-title">Private Mission Control Center</div>
   <div class="header-right">
-    <button id="themeBtn" onclick="toggleTheme()" class="theme-btn">☾ DARK</button>
-    <button id="notifBtn" onclick="toggleNotifications()" class="notif-btn" title="Push-Notifications">🔔 ALERTS</button>
-    <button id="privacyBtn" onclick="togglePrivacy()" style="background:transparent;border:1px solid var(--border2);color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:.6rem;padding:4px 8px;border-radius:3px;cursor:pointer;letter-spacing:.08em" title="Hide sensitive data">👁 SHOW</button>
-    <button onclick="logout()" style="background:transparent;border:1px solid var(--border2);color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:.6rem;padding:4px 8px;border-radius:3px;cursor:pointer;letter-spacing:.08em" title="Disconnect server">⏏ DISCONNECT</button>
+    <button id="themeBtn" onclick="toggleTheme()" class="hdr-btn theme-btn">☾ DARK</button>
+    <button id="notifBtn" onclick="toggleNotifications()" class="hdr-btn notif-btn" title="Push-Notifications">🔔 ALERTS</button>
+    <button id="privacyBtn" onclick="togglePrivacy()" class="hdr-btn" title="Hide sensitive data">👁 SHOW</button>
+    <button onclick="logout()" class="hdr-btn" title="Disconnect server">⏏ DISCONNECT</button>
     <span><span class="live-dot" id="liveDot"></span><span id="statusText">DEMO</span></span>
     <div class="countdown-box">
       <span class="countdown-label">CANDLE CLOSE</span>
