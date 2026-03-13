@@ -431,6 +431,21 @@
     .total-val   { font-size: 1rem; }
   }
 
+
+  .notif-btn {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--dim);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: .6rem;
+    padding: 4px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    letter-spacing: .08em;
+  }
+  .notif-btn.active { color: var(--lime); border-color: var(--lime); }
+  .notif-btn.denied { color: var(--red);  border-color: var(--red);  }
+
 </style>
 </head>
 <body>
@@ -500,6 +515,7 @@
 <div class="header">
   <div class="header-title">Private Mission Control Center</div>
   <div class="header-right">
+    <button id="notifBtn" onclick="toggleNotifications()" class="notif-btn" title="Push-Notifications">🔔 ALERTS</button>
     <button id="privacyBtn" onclick="togglePrivacy()" style="background:transparent;border:1px solid var(--border2);color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:.6rem;padding:4px 8px;border-radius:3px;cursor:pointer;letter-spacing:.08em" title="Hide sensitive data">👁 SHOW</button>
     <button onclick="logout()" style="background:transparent;border:1px solid var(--border2);color:var(--dim);font-family:'Share Tech Mono',monospace;font-size:.6rem;padding:4px 8px;border-radius:3px;cursor:pointer;letter-spacing:.08em" title="Disconnect server">⏏ DISCONNECT</button>
     <span><span class="live-dot" id="liveDot"></span><span id="statusText">DEMO</span></span>
@@ -1350,6 +1366,7 @@ async function fetchData() {
     document.getElementById('liveDot').className = 'live-dot online';
     document.getElementById('statusText').textContent = 'LIVE';
     recordSignals();
+    checkSignalFlips();
     renderAll();
   } catch(e) {
     document.getElementById('liveDot').className = 'live-dot offline';
@@ -1850,6 +1867,57 @@ setInterval(fetchPrices, 60000);
 fetchData();
 setInterval(fetchData, 5000);
 setInterval(loadHoldingsFromServer, 30000);
+
+// ── SERVICE WORKER + PUSH NOTIFICATIONS ─────────────────────────────────────
+let swRegistration = null;
+let prevSignalsForNotif = { ltpi: null, btc: null, eth: null, sol: null, gold: null };
+
+async function initServiceWorker() {
+  if (!('serviceWorker' in navigator)) return;
+  try {
+    swRegistration = await navigator.serviceWorker.register('./sw.js');
+  } catch(e) { console.warn('SW failed:', e); }
+}
+
+async function requestNotifPermission() {
+  if (!('Notification' in window)) return false;
+  if (Notification.permission === 'granted') return true;
+  if (Notification.permission === 'denied') return false;
+  return (await Notification.requestPermission()) === 'granted';
+}
+
+function sendFlipNotification(asset, signal) {
+  if (!swRegistration || !swRegistration.active) return;
+  if (Notification.permission !== 'granted') return;
+  swRegistration.active.postMessage({ type: 'SIGNAL_FLIP', asset, signal });
+}
+
+function checkSignalFlips() {
+  [['ltpi','LTPI'],['btc','BTC'],['eth','ETH'],['sol','SOL'],['gold','GOLD']].forEach(([key,name]) => {
+    const cur = state.signals[key];
+    const prev = prevSignalsForNotif[key];
+    if (prev !== null && prev !== cur) sendFlipNotification(name, cur);
+    prevSignalsForNotif[key] = cur;
+  });
+}
+
+async function toggleNotifications() {
+  const btn = document.getElementById('notifBtn');
+  if (Notification.permission === 'granted') { btn.classList.toggle('active'); return; }
+  const ok = await requestNotifPermission();
+  if (ok) { btn.classList.add('active'); btn.textContent = '🔔 ON'; }
+  else    { btn.classList.add('denied'); btn.textContent = '🔕 BLOCKED'; }
+}
+
+function updateNotifBtnState() {
+  const btn = document.getElementById('notifBtn');
+  if (!btn) return;
+  if (Notification.permission === 'granted') { btn.classList.add('active'); btn.textContent = '🔔 ON'; }
+  else if (Notification.permission === 'denied') { btn.classList.add('denied'); btn.textContent = '🔕 BLOCKED'; }
+}
+
+initServiceWorker().then(updateNotifBtnState);
+
 </script>
 <script>
 // ── LOGIN ────────────────────────────────────────────────────────────────────
