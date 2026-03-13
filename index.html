@@ -865,15 +865,17 @@ function renderSummary() {
 
 function makeCard(s) {
   const sig  = state.signals[s.signal_key] ?? 0;
-  const perf = (state.perf && state.perf[s.id]) || { net:'—', trades:'—', wr:'—' };
+  const perf = (state.perf && state.perf[s.id] && state.perf[s.id].trades !== undefined && state.perf[s.id].trades !== '—') ? state.perf[s.id] : { net:'0%', trades:'0', wr:'0%' };
   const subRows = s.subs.map(sub => {
     const v = state.subs[sub.key] ?? 0;
     return subRows2(sub, v);
   }).join('');
-  const conditionHint = privacyMode ? '' : `
+  const longLogicDisplay  = privacyMode ? (s.longLogic  || '—').replace(/RMSD|Bollinger|On-Chain|HLD|Kalman|QFL|NDSOD|Twin|VIDYA|SD|Adaptive|EMA|Sig\d*/g, 'Indicator') : (s.longLogic  || '—');
+  const shortLogicDisplay = privacyMode ? (s.shortLogic || '—').replace(/RMSD|Bollinger|On-Chain|HLD|Kalman|QFL|NDSOD|Twin|VIDYA|SD|Adaptive|EMA|Sig\d*/g, 'Indicator') : (s.shortLogic || '—');
+  const conditionHint = `
     <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--dim)">
-      <span style="color:var(--lime)">▲ LONG: </span>${s.longLogic || '—'}<br>
-      <span style="color:var(--red)">▼ SHORT: </span>${s.shortLogic || '—'}
+      <span style="color:var(--lime)">▲ LONG: </span>${longLogicDisplay}<br>
+      <span style="color:var(--red)">▼ SHORT: </span>${shortLogicDisplay}
     </div>`;
   const netColor = (perf.net||'').startsWith('+') ? 'var(--lime)' : perf.net === '—' ? 'var(--silver)' : 'var(--red)';
   return `<div class="script-card" id="card-${s.id}" style="border-top:2px solid ${s.color};box-shadow:0 0 20px ${s.color}18,inset 0 1px 0 ${s.color}22">
