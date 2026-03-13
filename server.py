@@ -14,7 +14,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from datetime import datetime
 from collections import defaultdict
-import os, time, hmac
+import os, time, hmac, urllib.request, json as _json
 
 app = Flask(__name__)
 
@@ -26,6 +26,7 @@ ALLOWED_ORIGINS = os.environ.get("ALLOWED_ORIGINS", "*")  # z.B. "https://mein.n
 CORS(app, resources={
     r"/data":     {"origins": ALLOWED_ORIGINS.split(",") if ALLOWED_ORIGINS != "*" else "*"},
     r"/holdings": {"origins": ALLOWED_ORIGINS.split(",") if ALLOWED_ORIGINS != "*" else "*"},
+    r"/prices":   {"origins": ALLOWED_ORIGINS.split(",") if ALLOWED_ORIGINS != "*" else "*"},
 })
 
 # ── RATE LIMITER (in-memory) ──────────────────────────────────────────────────
@@ -74,7 +75,7 @@ VALID_DIRS   = {"LONG", "SHORT", "NEUTRAL"}
 # ── STATE (in-memory) ─────────────────────────────────────────────────────────
 state = {
     "mode":      "AUTO",
-    "signals":   {"LTPI": 0, "BTC": 0, "ETH": 0, "SOL": 0, "GOLD": 0},
+    "signals":   {"LTPI": -1, "BTC": -1, "ETH": -1, "SOL": -1, "GOLD": 1},
     "rsi":       {"BTC": 50.0, "ETH": 50.0, "SOL": 50.0, "GOLD": 50.0},
     "roc":       {"BTC": 0.0,  "ETH": 0.0,  "SOL": 0.0,  "GOLD": 0.0},
     "ratios":    {"ETH_BTC": 1, "SOL_BTC": 1, "SOL_ETH": 1, "BTC_GOLD": 1},
@@ -86,11 +87,45 @@ state = {
         "hb_winners": [], "paxg_ok": False
     },
     "dom_major":   "BTC",
-    "ratio_states": {"ethbtc": 0, "solbtc": 0, "soleth": 0},
-    "ratio_raw":    {"ethbtc": None, "solbtc": None, "soleth": None},
+    "subs": {
+        "ltpi_rmsd": -1, "ltpi_bb": -1, "ltpi_onchain": -1,
+        "btc_hlsd": -1, "btc_kalman": -1, "btc_qfl": -1, "btc_ndsod": -1,
+        "eth_twin": -1, "eth_sd": -1, "eth_vidya": -1,
+        "sol_adaptive": -1, "sol_qfl": -1, "sol_kalman": -1,
+        "gold_ema": 1, "gold_sig": 1, "gold_sig3": 1
+    },
+    "ratio_states": {"ethbtc": -1, "solbtc": -1, "soleth": -1, "btcgold": -1},
+    "ratio_raw":    {"ethbtc": -1.0, "solbtc": -1.0, "soleth": -0.20, "btcgold": -1.0},
+    "momentum": {
+        "rsi": {"BTC": 57.47, "ETH": 56.71, "SOL": 54.89, "GOLD": 50.20},
+        "roc": {"BTC": 1.66,  "ETH": 2.05,  "SOL": 1.27,  "GOLD": -0.76}
+    },
     "alerts":      [],
-    "last_update": None
+    "last_update": None,
+    "trade_log":   {"BTC": [], "ETH": [], "SOL": [], "GOLD": [], "LTPI": []},
+    "open_trade":  {"BTC": None, "ETH": None, "SOL": None, "GOLD": None, "LTPI": None},
+    "perf":        {"BTC": {}, "ETH": {}, "SOL": {}, "GOLD": {}, "LTPI": {}}
 }
+
+def calc_perf(asset):
+    """Recalculate performance stats for one asset from its trade_log."""
+    trades = state["trade_log"][asset]
+    if not trades:
+        state["perf"][asset] = {"net": "—", "trades": "—", "wr": "—"}
+        return
+    closed = [t for t in trades if t.get("pct") is not None]
+    if not closed:
+        state["perf"][asset] = {"net": "—", "trades": "0", "wr": "—"}
+        return
+    total_pct = sum(t["pct"] for t in closed)
+    winners   = sum(1 for t in closed if t["pct"] > 0)
+    wr        = round(winners / len(closed) * 100, 1)
+    sign      = "+" if total_pct >= 0 else ""
+    state["perf"][asset] = {
+        "net":    f"{sign}{round(total_pct, 2)}%",
+        "trades": str(len(closed)),
+        "wr":     f"{wr}%"
+    }
 
 def calc_dom_major():
     n_eth_btc = state["ratio_states"]["ethbtc"]
@@ -129,26 +164,90 @@ def webhook():
 
     # WB-1: Strategy States + Ratio States
     if msg_type == "states":
+        # Price map: each asset can send its own price, LTPI uses BTC price
+        price_map = {}
+        for pk, pf in [("btc_price","BTC"),("eth_price","ETH"),("sol_price","SOL"),("gold_price","GOLD"),("ltpi_price","LTPI")]:
+            pv = _safe_float(data.get(pk), 0, 1e9)
+            if pv: price_map[pf] = pv
+        # If LTPI has no price but BTC does, use BTC as proxy
+        if "LTPI" not in price_map and "BTC" in price_map:
+            price_map["LTPI"] = price_map["BTC"]
+        # Also accept bare "price" field for single-asset alerts
+        bare_price = _safe_float(data.get("price"), 0, 1e9)
+
         for key, field in [("btc","BTC"),("eth","ETH"),("sol","SOL"),("gold","GOLD"),("ltpi","LTPI")]:
             if key in data:
                 v = _safe_int(data[key])
                 if v is not None:
                     prev = state["signals"][field]
                     state["signals"][field] = v
+                    # Determine price for this asset
+                    entry_price = price_map.get(field) or bare_price
+                    # Close open trade
+                    open_t = state["open_trade"][field]
+                    if open_t and entry_price:
+                        open_dir  = open_t["direction"]
+                        open_px   = open_t["price"]
+                        if open_dir == "LONG":
+                            pct = round((entry_price - open_px) / open_px * 100, 3)
+                        else:
+                            pct = round((open_px - entry_price) / open_px * 100, 3)
+                        open_t["exit_price"] = entry_price
+                        open_t["exit_time"]  = datetime.utcnow().isoformat()
+                        open_t["pct"]        = pct
+                        state["trade_log"][field].append(open_t)
+                        state["open_trade"][field] = None
+                        calc_perf(field)
+                    # Open new trade
+                    if v != 0 and entry_price:
+                        direction = "LONG" if v == 1 else "SHORT"
+                        state["open_trade"][field] = {
+                            "direction":  direction,
+                            "price":      entry_price,
+                            "entry_time": datetime.utcnow().isoformat(),
+                            "exit_price": None,
+                            "exit_time":  None,
+                            "pct":        None
+                        }
+                    # Flip alert
                     if (prev == 1 and v == -1) or (prev == -1 and v == 1):
-                        f = "LONG" if prev == 1 else "SHORT"
-                        t = "LONG" if v    == 1 else "SHORT"
-                        add_alert(f"{field} flip: {f} → {t}", field, t)
+                        f_dir = "LONG" if prev == 1 else "SHORT"
+                        t_dir = "LONG" if v    == 1 else "SHORT"
+                        add_alert(f"{field} flip: {f_dir} → {t_dir}", field, t_dir)
+        # RSI + ROC momentum
+        rsi_map = [("rsi_btc","BTC"),("rsi_eth","ETH"),("rsi_sol","SOL"),("rsi_gold","GOLD")]
+        roc_map = [("roc_btc","BTC"),("roc_eth","ETH"),("roc_sol","SOL"),("roc_gold","GOLD")]
+        for key, field in rsi_map:
+            if key in data:
+                v = _safe_float(data[key], 0, 100)
+                if v is not None: state["momentum"]["rsi"][field] = round(v, 2)
+        for key, field in roc_map:
+            if key in data:
+                v = _safe_float(data[key], -100, 100)
+                if v is not None: state["momentum"]["roc"][field] = round(v, 2)
+        # Sub-indicators
+        sub_map = {
+            "ltpi_rmsd": "ltpi_rmsd", "ltpi_bb": "ltpi_bb", "ltpi_onchain": "ltpi_onchain",
+            "btc_hlsd": "btc_hlsd", "btc_kalman": "btc_kalman", "btc_qfl": "btc_qfl", "btc_ndsod": "btc_ndsod",
+            "eth_twin": "eth_twin", "eth_sd": "eth_sd", "eth_vidya": "eth_vidya",
+            "sol_adaptive": "sol_adaptive", "sol_qfl": "sol_qfl", "sol_kalman": "sol_kalman",
+            "gold_ema": "gold_ema", "gold_sig": "gold_sig", "gold_sig3": "gold_sig3",
+        }
+        for key, field in sub_map.items():
+            if key in data:
+                v = _safe_int(data[key])
+                if v is not None and v != 0:
+                    state["subs"][field] = v
         # Ratio States → Dominant Major
         ratio_updated = False
-        for key, field in [("ethbtc_ratio","ethbtc"),("solbtc_ratio","solbtc"),("soleth_ratio","soleth")]:
+        for key, field in [("ethbtc_ratio","ethbtc"),("solbtc_ratio","solbtc"),("soleth_ratio","soleth"),("btcgold_ratio","btcgold")]:
             if key in data:
                 v = _safe_int(data[key])
                 if v is not None:
                     state["ratio_states"][field] = v
                     ratio_updated = True
         # Raw MTPI values
-        for key, field in [("ethbtc_raw","ethbtc"),("solbtc_raw","solbtc"),("soleth_raw","soleth")]:
+        for key, field in [("ethbtc_raw","ethbtc"),("solbtc_raw","solbtc"),("soleth_raw","soleth"),("btcgold_raw","btcgold")]:
             if key in data:
                 v = _safe_float(data[key], -1e6, 1e6)
                 if v is not None:
@@ -235,7 +334,10 @@ def webhook():
 def get_data():
     if not _rate_ok(_get_ip()):
         return jsonify({"error": "rate_limited"}), 429
-    return jsonify(state)
+    # Build response with perf included
+    resp = dict(state)
+    resp["perf"] = state["perf"]
+    return jsonify(resp)
 
 
 # ── /holdings — Portfolio Holdings ───────────────────────────────────────────
@@ -263,6 +365,32 @@ def set_holdings():
         cleaned[k] = v if v is not None else 0.0
     holdings_state = cleaned
     return jsonify({"ok": True})
+
+
+# ── /prices — CoinGecko proxy (avoids CORS + rate limits) ───────────────────
+_price_cache = {"data": {}, "ts": 0}
+PRICE_TTL = 55  # seconds
+
+@app.route("/prices", methods=["GET"])
+def get_prices():
+    if not _rate_ok(_get_ip()):
+        return jsonify({"error": "rate_limited"}), 429
+    global _price_cache
+    now = time.time()
+    if now - _price_cache["ts"] < PRICE_TTL and _price_cache["data"]:
+        return jsonify(_price_cache["data"])
+    try:
+        ids = "bitcoin,ethereum,solana,pax-gold,binancecoin,dogecoin,cardano,hyperliquid,chainlink,sui,ripple"
+        url = f"https://api.coingecko.com/api/v3/simple/price?ids={ids}&vs_currencies=usd"
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, timeout=8) as r:
+            data = _json.loads(r.read())
+        _price_cache = {"data": data, "ts": now}
+        return jsonify(data)
+    except Exception as e:
+        if _price_cache["data"]:
+            return jsonify(_price_cache["data"])
+        return jsonify({"error": str(e)}), 502
 
 
 # ── / health check — keine sensiblen Daten ───────────────────────────────────
