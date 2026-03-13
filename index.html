@@ -900,6 +900,12 @@ function togglePrivacy() {
       if (dtEl.dataset.real) dtEl.textContent = dtEl.dataset.real;
     }
   }
+  // Bottom total value
+  const ptEl = document.getElementById('portfolioTotal');
+  if (ptEl) {
+    if (privacyMode) { ptEl.dataset.real = ptEl.textContent; ptEl.textContent = '••••••• USD'; }
+    else { if (ptEl.dataset.real) ptEl.textContent = ptEl.dataset.real; }
+  }
   // Re-render cards (indicator labels)
   // Asset values + quantities
   const _hv_usdc = document.getElementById('hv-usdc');
