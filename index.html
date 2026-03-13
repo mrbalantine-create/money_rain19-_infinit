@@ -544,24 +544,31 @@
   <div>
     <div class="section-title">Portfolio</div>
     <div class="portfolio-box">
-      <!-- PRICES: Row 1 — Main -->
-      <div class="price-row">
+      <!-- REFRESH BUTTON — full width -->
+      <div style="margin-bottom:10px">
+        <button onclick="fetchPrices()" id="priceRefreshBtn" style="width:100%;padding:8px;background:var(--border2);color:var(--cyan);border:1px solid var(--border2);border-radius:5px;font-family:'Share Tech Mono',monospace;font-size:.7rem;letter-spacing:.1em;cursor:pointer">↻ REFRESH PRICES</button>
+        <span id="priceTime" style="color:var(--dim);font-size:.6rem;display:block;margin-top:4px;text-align:center">—</span>
+      </div>
+      <!-- PRICES: Row 1 — USDC · BTC · ETH -->
+      <div class="price-row" style="margin-bottom:8px">
         <div class="price-card"><div class="price-asset" style="color:#2775ca">USDC</div><div class="price-val" id="pr-usdc">$1.00</div></div>
         <div class="price-card"><div class="price-asset" style="color:#ff9500">BTC</div><div class="price-val" id="pr-btc">—</div></div>
         <div class="price-card"><div class="price-asset" style="color:#00aaff">ETH</div><div class="price-val" id="pr-eth">—</div></div>
+      </div>
+      <!-- PRICES: Row 2 — SOL · PAXG · BNB -->
+      <div class="price-row" style="margin-bottom:8px">
         <div class="price-card"><div class="price-asset" style="color:#9945ff">SOL</div><div class="price-val" id="pr-sol">—</div></div>
         <div class="price-card"><div class="price-asset" style="color:#ffd60a">PAXG</div><div class="price-val" id="pr-gold">—</div></div>
-        <div class="price-refresh">
-          <button onclick="fetchPrices()" id="priceRefreshBtn">↻ PREISE</button>
-          <span id="priceTime" style="color:var(--dim);font-size:.6rem;display:block;margin-top:3px;">—</span>
-        </div>
-      </div>
-      <!-- PRICES: Row 2 — Alt Coins -->
-      <div class="price-row" style="margin-top:8px">
         <div class="price-card"><div class="price-asset" style="color:#f3ba2f">BNB</div><div class="price-val" id="pr-bnb">—</div></div>
+      </div>
+      <!-- PRICES: Row 3 — DOGE · ADA · HYPE -->
+      <div class="price-row" style="margin-bottom:8px">
         <div class="price-card"><div class="price-asset" style="color:#c2a633">DOGE</div><div class="price-val" id="pr-doge">—</div></div>
         <div class="price-card"><div class="price-asset" style="color:#0033ad">ADA</div><div class="price-val" id="pr-ada">—</div></div>
         <div class="price-card"><div class="price-asset" style="color:#00ff88">HYPE</div><div class="price-val" id="pr-hype">—</div></div>
+      </div>
+      <!-- PRICES: Row 4 — LINK · SUI · XRP -->
+      <div class="price-row">
         <div class="price-card"><div class="price-asset" style="color:#375bd2">LINK</div><div class="price-val" id="pr-link">—</div></div>
         <div class="price-card"><div class="price-asset" style="color:#6fbcf0">SUI</div><div class="price-val" id="pr-sui">—</div></div>
         <div class="price-card"><div class="price-asset" style="color:#00aae4">XRP</div><div class="price-val" id="pr-xrp">—</div></div>
@@ -768,13 +775,13 @@ const SCRIPTS = [
 
 // ── STATE ────────────────────────────────────────────────────────────────────
 let state = {
-  signals: { ltpi:0, btc:0, eth:0, sol:0, gold:0 },
+  signals: { ltpi:-1, btc:-1, eth:-1, sol:-1, gold:1 },
   subs: {
-    ltpi_rmsd:0, ltpi_bb:0, ltpi_onchain:0,
-    btc_hlsd:0, btc_kalman:0, btc_qfl:0, btc_ndsod:0,
-    eth_twin:0, eth_sd:0, eth_vidya:0,
-    sol_adaptive:0, sol_qfl:0, sol_kalman:0,
-    gold_ema:0, gold_sig:0, gold_sig3:0,
+    ltpi_rmsd:-1, ltpi_bb:-1, ltpi_onchain:-1,
+    btc_hlsd:-1, btc_kalman:-1, btc_qfl:-1, btc_ndsod:-1,
+    eth_twin:-1, eth_sd:-1, eth_vidya:-1,
+    sol_adaptive:-1, sol_qfl:-1, sol_kalman:-1,
+    gold_ema:1, gold_sig:1, gold_sig3:1,
   },
   perf: {
     ltpi:{ net:'+0.0%', trades:0, wr:'0%' },
@@ -786,9 +793,9 @@ let state = {
   alerts: [],
   last_update: null,
   dom_major: 'BTC',
-  ratio_states: { ethbtc: 0, solbtc: 0, soleth: 0 },
-  ratio_raw: { ethbtc: null, solbtc: null, soleth: null },
-  perf: { ltpi:{}, btc:{}, eth:{}, sol:{}, gold:{} },
+  ratio_states: { ethbtc: -1, solbtc: -1, soleth: -1, btcgold: -1 },
+  ratio_raw:    { ethbtc: -1.0, solbtc: -1.0, soleth: -0.20, btcgold: -1.0 },
+  perf: { ltpi:{net:"0%",trades:"0",wr:"0%"}, btc:{net:"0%",trades:"0",wr:"0%"}, eth:{net:"0%",trades:"0",wr:"0%"}, sol:{net:"0%",trades:"0",wr:"0%"}, gold:{net:"0%",trades:"0",wr:"0%"} },
 };
 
 // ── PRIVACY MODE ─────────────────────────────────────────────────────────────
@@ -934,6 +941,7 @@ function renderDomMajor() {
     `<span>ETH/BTC</span>${fmtState(rs.ethbtc)}${fmtRaw(rr.ethbtc)}` +
     `<span>SOL/BTC</span>${fmtState(rs.solbtc)}${fmtRaw(rr.solbtc)}` +
     `<span>SOL/ETH</span>${fmtState(rs.soleth)}${fmtRaw(rr.soleth)}` +
+    `<span>BTC/GOLD</span>${fmtState(rs.btcgold)}${fmtRaw(rr.btcgold)}` +
     `</div>`;
 }
 
@@ -979,11 +987,11 @@ async function fetchData() {
 function loadDemo() {
   state.signals = { ltpi:1, btc:1, eth:-1, sol:1, gold:0 };
   state.subs = {
-    ltpi_rmsd:1, ltpi_bb:1, ltpi_onchain:1,
-    btc_hlsd:1, btc_kalman:1, btc_qfl:-1, btc_ndsod:1,
+    ltpi_rmsd:-1, ltpi_bb:-1, ltpi_onchain:-1,
+    btc_hlsd:-1, btc_kalman:-1, btc_qfl:-1, btc_ndsod:-1,
     eth_twin:-1, eth_sd:-1, eth_vidya:-1,
-    sol_adaptive:1, sol_qfl:1, sol_kalman:0,
-    gold_ema:0, gold_sig:0, gold_sig3:0,
+    sol_adaptive:-1, sol_qfl:-1, sol_kalman:-1,
+    gold_ema:1, gold_sig:1, gold_sig3:1,
   };
   state.perf = {
     ltpi: { net:'+284.3%', trades:48, wr:'62%' },
