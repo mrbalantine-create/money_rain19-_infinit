@@ -435,6 +435,26 @@
 </head>
 <body>
 
+<!-- LOGIN OVERLAY -->
+<div id="loginOverlay" style="position:fixed;inset:0;background:#080c14;z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0">
+  <div style="background:#0d1220;border:1px solid #1a2540;border-radius:8px;padding:40px 36px;width:340px;max-width:90vw;text-align:center">
+    <div style="font-family:'Share Tech Mono',monospace;font-size:.6rem;letter-spacing:.3em;color:#3a4a70;text-transform:uppercase;margin-bottom:6px">Mission Control Center</div>
+    <div style="font-family:'Share Tech Mono',monospace;font-size:1.3rem;font-weight:700;color:#00ccff;letter-spacing:.15em;margin-bottom:28px">ACCESS CONTROL</div>
+    <div style="position:relative;margin-bottom:16px">
+      <input id="loginInput" type="password" placeholder="Enter Access Token" 
+        style="width:100%;background:#080c14;border:1px solid #203060;color:#ccd6f6;padding:12px 14px;font-family:'Share Tech Mono',monospace;font-size:.85rem;border-radius:4px;outline:none;letter-spacing:.1em;text-align:center"
+        onkeydown="if(event.key==='Enter')checkLogin()">
+    </div>
+    <button onclick="checkLogin()" 
+      style="width:100%;background:#00ccff;color:#000;border:none;padding:11px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.95rem;letter-spacing:.15em;cursor:pointer;border-radius:4px;text-transform:uppercase">
+      AUTHENTICATE
+    </button>
+    <div id="loginError" style="margin-top:14px;font-family:'Share Tech Mono',monospace;font-size:.7rem;color:#ff3355;min-height:18px"></div>
+  </div>
+  <div style="margin-top:18px;font-family:'Share Tech Mono',monospace;font-size:.55rem;color:#3a4a70;letter-spacing:.15em">SECURE ACCESS · MrBalantine</div>
+</div>
+
+
 <!-- CONFIG BANNER -->
 <div id="configBanner">
   <label>🔗 SERVER URL</label>
@@ -547,6 +567,21 @@
   </div>
 
   <!-- PORTFOLIO -->
+  <!-- EQUITY CURVE -->
+  <div>
+    <div class="section-title">Equity Curve — Cumulative %</div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:16px 16px 10px;">
+      <canvas id="equityChart" style="width:100%;height:220px;display:block;"></canvas>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;justify-content:center">
+        <span style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:#22c55e">● LTPI</span>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:#ff9500">● BTC</span>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:#00aaff">● ETH</span>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:#9945ff">● SOL</span>
+        <span style="font-family:'Share Tech Mono',monospace;font-size:.6rem;color:#ffd60a">● GOLD</span>
+      </div>
+    </div>
+  </div>
+
   <div>
     <div class="section-title">Portfolio</div>
     <div class="portfolio-box">
@@ -805,6 +840,7 @@ let state = {
     rsi: { BTC: 57.47, ETH: 56.71, SOL: 54.89, GOLD: 50.20 },
     roc: { BTC: 1.66,  ETH: 2.05,  SOL: 1.27,  GOLD: -0.76 }
   },
+  trade_log: { BTC: [], ETH: [], SOL: [], GOLD: [], LTPI: [] },
   perf: { ltpi:{net:"0%",trades:"0",wr:"0%"}, btc:{net:"0%",trades:"0",wr:"0%"}, eth:{net:"0%",trades:"0",wr:"0%"}, sol:{net:"0%",trades:"0",wr:"0%"}, gold:{net:"0%",trades:"0",wr:"0%"} },
 };
 
@@ -823,6 +859,16 @@ function togglePrivacy() {
       bannerEl.textContent = '••••••• USD';
     } else {
       if (bannerEl.dataset.real) bannerEl.textContent = bannerEl.dataset.real;
+    }
+  }
+  // Desktop total value banner
+  const dtEl = document.getElementById('portfolioTotalDesktop');
+  if (dtEl) {
+    if (privacyMode) {
+      dtEl.dataset.real = dtEl.textContent;
+      dtEl.textContent = '••••••• USD';
+    } else {
+      if (dtEl.dataset.real) dtEl.textContent = dtEl.dataset.real;
     }
   }
   // Re-render cards (indicator labels)
@@ -1000,7 +1046,7 @@ function renderMomentum() {
   }).join('');
 }
 
-function renderAll() { renderMomentum(); renderSummary(); renderCards(); renderFlips(); renderChart(); renderDomMajor(); }
+function renderAll() { renderMomentum(); renderSummary(); renderEquity(); renderCards(); renderFlips(); renderChart(); renderDomMajor(); }
 
 // ── FETCH ────────────────────────────────────────────────────────────────────
 async function fetchData() {
@@ -1042,6 +1088,7 @@ async function fetchData() {
       if (bs.ndsod  !== undefined && bs.ndsod  !== 0) state.subs.btc_ndsod  = bs.ndsod;
     }
     if (d.alerts) state.alerts = d.alerts;
+    if (d.trade_log) Object.assign(state.trade_log, d.trade_log);
     if (d.momentum) {
       if (d.momentum.rsi) Object.assign(state.momentum.rsi, d.momentum.rsi);
       if (d.momentum.roc) Object.assign(state.momentum.roc, d.momentum.roc);
@@ -1268,6 +1315,149 @@ function recordSignals() {
 }
 
 // ── CHART ────────────────────────────────────────────────────────────────────
+function renderEquity() {
+  const canvas = document.getElementById('equityChart');
+  if (!canvas) return;
+
+  const SERIES = [
+    { key:'LTPI', color:'#22c55e' },
+    { key:'BTC',  color:'#ff9500' },
+    { key:'ETH',  color:'#00aaff' },
+    { key:'SOL',  color:'#9945ff' },
+    { key:'GOLD', color:'#ffd60a' },
+  ];
+
+  // Build cumulative equity from trade_log
+  // Each series: [{date, cumPct}]
+  const seriesData = SERIES.map(s => {
+    const trades = (state.trade_log && state.trade_log[s.key]) || [];
+    const closed = trades.filter(t => t.pct !== null && t.exit_time);
+    let cum = 0;
+    const points = [{ date: null, cum: 0 }]; // start at 0
+    closed.forEach(t => {
+      cum += t.pct;
+      points.push({ date: t.exit_time.slice(0,10), cum: Math.round(cum * 100) / 100 });
+    });
+    return { ...s, points };
+  });
+
+  const dpr = window.devicePixelRatio || 1;
+  const W   = canvas.parentElement.clientWidth - 32;
+  const H   = 220;
+  canvas.width  = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width  = W + 'px';
+  canvas.style.height = H + 'px';
+
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, W, H);
+
+  const PAD_L = 48, PAD_R = 16, PAD_T = 16, PAD_B = 28;
+  const chartW = W - PAD_L - PAD_R;
+  const chartH = H - PAD_T - PAD_B;
+
+  // Background
+  ctx.fillStyle = '#0b1118';
+  ctx.fillRect(0, 0, W, H);
+
+  // Find min/max across all series
+  let allVals = [0];
+  seriesData.forEach(s => s.points.forEach(p => allVals.push(p.cum)));
+  let minV = Math.min(...allVals);
+  let maxV = Math.max(...allVals);
+  if (minV === maxV) { minV -= 10; maxV += 10; }
+  const pad = (maxV - minV) * 0.1;
+  minV -= pad; maxV += pad;
+
+  const toY = v => PAD_T + chartH - ((v - minV) / (maxV - minV)) * chartH;
+  const zeroY = toY(0);
+
+  // Grid lines
+  const gridVals = [0];
+  const step = Math.ceil((maxV - minV) / 4 / 10) * 10 || 5;
+  for (let v = step; v <= maxV + step; v += step) if (v <= maxV) gridVals.push(v);
+  for (let v = -step; v >= minV - step; v -= step) if (v >= minV) gridVals.push(v);
+
+  gridVals.forEach(v => {
+    const y = toY(v);
+    if (y < PAD_T || y > H - PAD_B) return;
+    ctx.beginPath();
+    ctx.strokeStyle = v === 0 ? '#2a3f55' : '#1a2d3d';
+    ctx.lineWidth   = v === 0 ? 1.5 : 0.7;
+    ctx.setLineDash(v === 0 ? [] : [3, 4]);
+    ctx.moveTo(PAD_L, y);
+    ctx.lineTo(W - PAD_R, y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = v === 0 ? '#6688aa' : '#3d5266';
+    ctx.font = '9px Share Tech Mono, monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText((v >= 0 ? '+' : '') + v + '%', PAD_L - 4, y + 3);
+  });
+
+  // Find all dates across all series for x axis
+  let allDates = new Set();
+  seriesData.forEach(s => s.points.filter(p=>p.date).forEach(p => allDates.add(p.date)));
+  allDates = Array.from(allDates).sort();
+
+  // Draw zero line
+  ctx.beginPath();
+  ctx.strokeStyle = '#2a3f55';
+  ctx.lineWidth = 1;
+  ctx.moveTo(PAD_L, zeroY);
+  ctx.lineTo(W - PAD_R, zeroY);
+  ctx.stroke();
+
+  // Draw each series
+  seriesData.forEach(s => {
+    if (s.points.length < 2) {
+      // Just draw a dot at 0
+      ctx.beginPath();
+      ctx.arc(PAD_L, zeroY, 3, 0, Math.PI * 2);
+      ctx.fillStyle = s.color + '88';
+      ctx.fill();
+      return;
+    }
+    const n = s.points.length;
+    ctx.beginPath();
+    ctx.strokeStyle = s.color;
+    ctx.lineWidth = 1.8;
+    ctx.lineJoin = 'round';
+
+    s.points.forEach((p, i) => {
+      const x = i === 0 ? PAD_L : PAD_L + ((i - 1) / Math.max(1, n - 2)) * chartW;
+      const y = toY(p.cum);
+      if (i === 0) ctx.moveTo(PAD_L, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // Last point dot + label
+    const last = s.points[n-1];
+    const lx = PAD_L + chartW;
+    const ly = toY(last.cum);
+    ctx.beginPath();
+    ctx.arc(lx, ly, 3.5, 0, Math.PI * 2);
+    ctx.fillStyle = s.color;
+    ctx.fill();
+  });
+
+  // X axis date labels
+  if (allDates.length > 0) {
+    const nd = allDates.length;
+    const labelStep = Math.max(1, Math.floor(nd / 5));
+    ctx.fillStyle = '#3d5266';
+    ctx.font = '9px Share Tech Mono, monospace';
+    ctx.textAlign = 'center';
+    allDates.forEach((d, i) => {
+      if (i % labelStep !== 0 && i !== nd - 1) return;
+      const x = PAD_L + (i / Math.max(1, nd - 1)) * chartW;
+      ctx.fillText(d.slice(5), x, H - 6);
+    });
+  }
+}
+
 function renderChart() {
   const canvas = document.getElementById('signalChart');
   if (!canvas) return;
@@ -1415,6 +1605,40 @@ setInterval(fetchPrices, 60000);
 fetchData();
 setInterval(fetchData, 5000);
 setInterval(loadHoldingsFromServer, 30000);
+</script>
+<script>
+// ── LOGIN ────────────────────────────────────────────────────────────────────
+const ACCESS_HASH = '3d1bf065f59b54866900a23ccfd372c227985f5921b0e5dec92f725b4a4c332b';
+const LOGIN_KEY   = 'mcc_auth_p2';
+
+async function sha256(msg) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+async function checkLogin() {
+  const val = document.getElementById('loginInput').value.trim();
+  const hash = await sha256(val);
+  if (hash === ACCESS_HASH) {
+    sessionStorage.setItem(LOGIN_KEY, '1');
+    document.getElementById('loginOverlay').style.display = 'none';
+    document.getElementById('loginInput').value = '';
+  } else {
+    const err = document.getElementById('loginError');
+    err.textContent = '⚠ Invalid token — access denied';
+    document.getElementById('loginInput').value = '';
+    setTimeout(() => err.textContent = '', 2500);
+  }
+}
+
+async function initLogin() {
+  if (sessionStorage.getItem(LOGIN_KEY) === '1') {
+    document.getElementById('loginOverlay').style.display = 'none';
+  }
+  // focus input
+  setTimeout(() => document.getElementById('loginInput')?.focus(), 100);
+}
+initLogin();
 </script>
 </body>
 </html>
