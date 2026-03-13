@@ -1675,7 +1675,8 @@ function renderEquity() {
   const chartH = H - PAD_T - PAD_B;
 
   // Background
-  ctx.fillStyle = '#0b1118';
+  const isLightEq = document.body.classList.contains('light-mode');
+  ctx.fillStyle = isLightEq ? '#f0f2f5' : '#0b1118';
   ctx.fillRect(0, 0, W, H);
 
   // Find min/max across all series
@@ -1700,14 +1701,14 @@ function renderEquity() {
     const y = toY(v);
     if (y < PAD_T || y > H - PAD_B) return;
     ctx.beginPath();
-    ctx.strokeStyle = v === 0 ? '#2a3f55' : '#1a2d3d';
+    ctx.strokeStyle = isLightEq ? (v === 0 ? '#aab0c0' : '#c8ccd8') : (v === 0 ? '#2a3f55' : '#1a2d3d');
     ctx.lineWidth   = v === 0 ? 1.5 : 0.7;
     ctx.setLineDash(v === 0 ? [] : [3, 4]);
     ctx.moveTo(PAD_L, y);
     ctx.lineTo(W - PAD_R, y);
     ctx.stroke();
     ctx.setLineDash([]);
-    ctx.fillStyle = v === 0 ? '#6688aa' : '#3d5266';
+    ctx.fillStyle = isLightEq ? '#6a7080' : (v === 0 ? '#6688aa' : '#3d5266');
     ctx.font = '9px Share Tech Mono, monospace';
     ctx.textAlign = 'right';
     ctx.fillText((v >= 0 ? '+' : '') + v + '%', PAD_L - 4, y + 3);
@@ -1720,7 +1721,7 @@ function renderEquity() {
 
   // Draw zero line
   ctx.beginPath();
-  ctx.strokeStyle = '#2a3f55';
+  ctx.strokeStyle = isLightEq ? '#aab0c0' : '#2a3f55';
   ctx.lineWidth = 1;
   ctx.moveTo(PAD_L, zeroY);
   ctx.lineTo(W - PAD_R, zeroY);
@@ -1764,7 +1765,7 @@ function renderEquity() {
   if (allDates.length > 0) {
     const nd = allDates.length;
     const labelStep = Math.max(1, Math.floor(nd / 5));
-    ctx.fillStyle = '#3d5266';
+    ctx.fillStyle = isLightEq ? '#6a7080' : '#3d5266';
     ctx.font = '9px Share Tech Mono, monospace';
     ctx.textAlign = 'center';
     allDates.forEach((d, i) => {
@@ -1815,21 +1816,22 @@ function renderChart() {
   const midY   = PAD_T + chartH / 2;
 
   // Background
-  ctx.fillStyle = '#0b1118';
+  const isLight = document.body.classList.contains('light-mode');
+  ctx.fillStyle = isLight ? '#f0f2f5' : '#0b1118';
   ctx.fillRect(0, 0, W, H);
 
   // Grid lines
   [-1, 0, 1].forEach(v => {
     const y = midY - v * (chartH / 2);
     ctx.beginPath();
-    ctx.strokeStyle = v === 0 ? '#243447' : '#1e2d3d';
+    ctx.strokeStyle = isLight ? (v === 0 ? '#aab0c0' : '#c8ccd8') : (v === 0 ? '#243447' : '#1e2d3d');
     ctx.lineWidth   = v === 0 ? 1.5 : 0.7;
     ctx.setLineDash(v === 0 ? [] : [4, 4]);
     ctx.moveTo(PAD_L, y);
     ctx.lineTo(W - PAD_R, y);
     ctx.stroke();
     ctx.setLineDash([]);
-    ctx.fillStyle = '#3d5266';
+    ctx.fillStyle = isLight ? '#6a7080' : '#3d5266';
     ctx.font = '9px Share Tech Mono, monospace';
     ctx.textAlign = 'right';
     ctx.fillText(v === 1 ? 'LONG' : v === -1 ? 'SHORT' : '—', PAD_L - 4, y + 3);
@@ -1837,7 +1839,7 @@ function renderChart() {
 
   // X axis labels
   const n = h.length;
-  ctx.fillStyle = '#3d5266';
+  ctx.fillStyle = isLight ? '#6a7080' : '#3d5266';
   ctx.font = '9px Share Tech Mono, monospace';
   ctx.textAlign = 'center';
   const labelStep = Math.max(1, Math.floor(n / 7));
