@@ -199,11 +199,11 @@
   .card-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     padding: 12px 16px;
     border-bottom: 1px solid var(--border);
+    gap: 10px;
   }
-  .card-asset { display: flex; align-items: center; gap: 10px; }
+  .card-asset { display: flex; align-items: center; gap: 10px; flex: 1; }
   .asset-dot  { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; filter: brightness(1.2); }
   .card-name  { font-size: .95rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
   .card-signal {
@@ -1179,9 +1179,9 @@ function makeCard(s) {
     <div class="card-header">
       <div class="card-asset">
         <div class="asset-dot" style="background:${s.color};box-shadow:0 0 8px ${s.color}40"></div>
-        <div><div class="card-name" style="color:${s.color}">${s.name}</div></div>
+        <div class="card-name" style="color:${s.color}">${s.name}</div>
+        <div class="card-signal ${sigClass(sig)}" style="margin-left:8px">${sigText(sig)}</div>
       </div>
-      <div class="card-signal ${sigClass(sig)}">${sigText(sig)}</div>
     </div>
     <div class="card-body">
       <div class="sub-signals">${subRows}${conditionHint}</div>
