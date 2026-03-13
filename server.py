@@ -86,9 +86,22 @@ state = {
         "hb_winners": [], "paxg_ok": False
     },
     "dom_major":   "BTC",
+    "ratio_states": {"ethbtc": 0, "solbtc": 0, "soleth": 0},
+    "ratio_raw":    {"ethbtc": None, "solbtc": None, "soleth": None},
     "alerts":      [],
     "last_update": None
 }
+
+def calc_dom_major():
+    n_eth_btc = state["ratio_states"]["ethbtc"]
+    n_sol_btc = state["ratio_states"]["solbtc"]
+    n_sol_eth = state["ratio_states"]["soleth"]
+    if n_eth_btc == 1 and n_sol_eth == -1:
+        state["dom_major"] = "ETH"
+    elif n_sol_btc == 1 and n_sol_eth == 1:
+        state["dom_major"] = "SOL"
+    else:
+        state["dom_major"] = "BTC"
 
 def add_alert(msg, asset, direction):
     state["alerts"].insert(0, {
@@ -114,7 +127,7 @@ def webhook():
 
     msg_type = str(data.get("t", data.get("type", ""))).lower()
 
-    # WB-1: Strategy States
+    # WB-1: Strategy States + Ratio States
     if msg_type == "states":
         for key, field in [("btc","BTC"),("eth","ETH"),("sol","SOL"),("gold","GOLD"),("ltpi","LTPI")]:
             if key in data:
@@ -126,6 +139,22 @@ def webhook():
                         f = "LONG" if prev == 1 else "SHORT"
                         t = "LONG" if v    == 1 else "SHORT"
                         add_alert(f"{field} flip: {f} → {t}", field, t)
+        # Ratio States → Dominant Major
+        ratio_updated = False
+        for key, field in [("ethbtc_ratio","ethbtc"),("solbtc_ratio","solbtc"),("soleth_ratio","soleth")]:
+            if key in data:
+                v = _safe_int(data[key])
+                if v is not None:
+                    state["ratio_states"][field] = v
+                    ratio_updated = True
+        # Raw MTPI values
+        for key, field in [("ethbtc_raw","ethbtc"),("solbtc_raw","solbtc"),("soleth_raw","soleth")]:
+            if key in data:
+                v = _safe_float(data[key], -1e6, 1e6)
+                if v is not None:
+                    state["ratio_raw"][field] = round(v, 4)
+        if ratio_updated:
+            calc_dom_major()
 
     # WB-2: RSI + ROC
     elif msg_type == "rsi":

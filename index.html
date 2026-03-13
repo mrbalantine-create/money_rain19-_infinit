@@ -769,6 +769,7 @@ let state = {
   last_update: null,
   dom_major: 'BTC',
   ratio_states: { ethbtc: 0, solbtc: 0, soleth: 0 },
+  ratio_raw: { ethbtc: null, solbtc: null, soleth: null },
 };
 
 // ── HELPERS ──────────────────────────────────────────────────────────────────
@@ -860,9 +861,15 @@ function renderDomMajor() {
   if (nameEl) { nameEl.textContent = dm; nameEl.style.color = col; }
   if (cardEl) { cardEl.style.borderTopColor = col; cardEl.style.borderTopWidth = '2px'; cardEl.style.boxShadow = `0 0 20px ${col}18`; }
   const rs = state.ratio_states || {};
-  const fmt = v => v === 1 ? '<span style="color:var(--lime)">▲ STRONG</span>' : v === -1 ? '<span style="color:var(--red)">▼ WEAK</span>' : '<span style="color:var(--silver)">— —</span>';
+  const rr = state.ratio_raw || {};
+  const fmtState = v => v === 1 ? '<span style="color:var(--lime)">▲</span>' : v === -1 ? '<span style="color:var(--red)">▼</span>' : '<span style="color:var(--silver)">—</span>';
+  const fmtRaw = v => v === null || v === undefined ? '<span style="color:var(--dim)">—</span>' : '<span style="color:var(--silver)">' + parseFloat(v).toFixed(4) + '</span>';
   if (ratioEl) ratioEl.innerHTML =
-    `ETH/BTC: ${fmt(rs.ethbtc)}<br>SOL/BTC: ${fmt(rs.solbtc)}<br>SOL/ETH: ${fmt(rs.soleth)}`;
+    `<div style="display:grid;grid-template-columns:70px 30px 1fr;gap:4px;align-items:center;line-height:2">` +
+    `<span>ETH/BTC</span>${fmtState(rs.ethbtc)}${fmtRaw(rr.ethbtc)}` +
+    `<span>SOL/BTC</span>${fmtState(rs.solbtc)}${fmtRaw(rr.solbtc)}` +
+    `<span>SOL/ETH</span>${fmtState(rs.soleth)}${fmtRaw(rr.soleth)}` +
+    `</div>`;
 }
 
 function renderAll() { renderSummary(); renderCards(); renderFlips(); renderChart(); renderDomMajor(); }
@@ -886,6 +893,7 @@ async function fetchData() {
     });
     if (d.alerts) state.alerts = d.alerts;
     if (d.ratio_states) Object.assign(state.ratio_states || (state.ratio_states = {}), d.ratio_states);
+    if (d.ratio_raw) Object.assign(state.ratio_raw || (state.ratio_raw = {}), d.ratio_raw);
     if (d.dom_major) state.dom_major = d.dom_major;
     if (d.last_update) {
       state.last_update = d.last_update;
