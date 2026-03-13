@@ -1268,7 +1268,7 @@ function calcPortfolio() {
 
 async function fetchPrices() {
   const btn = document.getElementById('priceRefreshBtn');
-  btn.textContent = '↻ ...';
+  if (btn) btn.textContent = '↻ ...';
   try {
     const priceUrl = PUBLIC_SERVER_URL
       ? PUBLIC_SERVER_URL + '/prices'
@@ -1306,7 +1306,7 @@ async function fetchPrices() {
     document.getElementById('priceTime').textContent = 'Fehler — retry in 15s';
     setTimeout(fetchPrices, 15000);
   }
-  btn.textContent = '↻ PREISE';
+  if (btn) btn.textContent = '↻ PREISE';
 }
 
 // ── SIGNAL HISTORY ───────────────────────────────────────────────────────────
