@@ -870,7 +870,7 @@ function makeCard(s) {
     const v = state.subs[sub.key] ?? 0;
     return subRows2(sub, v);
   }).join('');
-  const conditionHint = `
+  const conditionHint = privacyMode ? '' : `
     <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-family:'Share Tech Mono',monospace;font-size:.6rem;color:var(--dim)">
       <span style="color:var(--lime)">▲ LONG: </span>${s.longLogic || '—'}<br>
       <span style="color:var(--red)">▼ SHORT: </span>${s.shortLogic || '—'}
@@ -956,18 +956,45 @@ async function fetchData() {
     });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const d = await res.json();
-    if (d.signals) Object.assign(state.signals, {
-      ltpi: d.signals.LTPI ?? 0, btc: d.signals.BTC ?? 0,
-      eth:  d.signals.ETH  ?? 0, sol: d.signals.SOL ?? 0, gold: d.signals.GOLD ?? 0,
-    });
+    if (d.signals) {
+      const sm = d.signals;
+      if (sm.LTPI !== undefined && sm.LTPI !== 0) state.signals.ltpi = sm.LTPI;
+      if (sm.BTC  !== undefined && sm.BTC  !== 0) state.signals.btc  = sm.BTC;
+      if (sm.ETH  !== undefined && sm.ETH  !== 0) state.signals.eth  = sm.ETH;
+      if (sm.SOL  !== undefined && sm.SOL  !== 0) state.signals.sol  = sm.SOL;
+      if (sm.GOLD !== undefined && sm.GOLD !== 0) state.signals.gold = sm.GOLD;
+    }
     if (d.perf) Object.assign(state.perf || (state.perf = {}), d.perf);
-    if (d.btc_sub) Object.assign(state.subs, {
-      btc_hlsd: d.btc_sub.hlsd ?? 0, btc_kalman: d.btc_sub.kalman ?? 0,
-      btc_qfl:  d.btc_sub.qfl  ?? 0, btc_ndsod:  d.btc_sub.ndsod  ?? 0,
-    });
+    // Merge all subs — never overwrite with 0
+    const allSubKeys = [
+      'ltpi_rmsd','ltpi_bb','ltpi_onchain',
+      'btc_hlsd','btc_kalman','btc_qfl','btc_ndsod',
+      'eth_twin','eth_sd','eth_vidya',
+      'sol_adaptive','sol_qfl','sol_kalman',
+      'gold_ema','gold_sig','gold_sig3'
+    ];
+    if (d.subs) {
+      allSubKeys.forEach(k => {
+        if (d.subs[k] !== undefined && d.subs[k] !== 0) state.subs[k] = d.subs[k];
+      });
+    }
+    // Legacy btc_sub mapping
+    if (d.btc_sub) {
+      const bs = d.btc_sub;
+      if (bs.hlsd   !== undefined && bs.hlsd   !== 0) state.subs.btc_hlsd   = bs.hlsd;
+      if (bs.kalman !== undefined && bs.kalman !== 0) state.subs.btc_kalman = bs.kalman;
+      if (bs.qfl    !== undefined && bs.qfl    !== 0) state.subs.btc_qfl    = bs.qfl;
+      if (bs.ndsod  !== undefined && bs.ndsod  !== 0) state.subs.btc_ndsod  = bs.ndsod;
+    }
     if (d.alerts) state.alerts = d.alerts;
-    if (d.ratio_states) Object.assign(state.ratio_states || (state.ratio_states = {}), d.ratio_states);
-    if (d.ratio_raw) Object.assign(state.ratio_raw || (state.ratio_raw = {}), d.ratio_raw);
+    if (d.ratio_states) {
+      const rs = d.ratio_states;
+      Object.keys(rs).forEach(k => { if (rs[k] !== undefined && rs[k] !== 0) state.ratio_states[k] = rs[k]; });
+    }
+    if (d.ratio_raw) {
+      const rr = d.ratio_raw;
+      Object.keys(rr).forEach(k => { if (rr[k] !== undefined && rr[k] !== null) state.ratio_raw[k] = rr[k]; });
+    }
     if (d.dom_major) state.dom_major = d.dom_major;
     if (d.last_update) {
       state.last_update = d.last_update;
