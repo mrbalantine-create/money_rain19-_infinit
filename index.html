@@ -901,6 +901,212 @@ function togglePrivacy() {
     }
   }
   // Re-render cards (indicator labels)
+  // Asset values + quantities
+  const _hv_usdc = document.getElementById('hv-usdc');
+  if (_hv_usdc) {
+    if (privacyMode) { _hv_usdc.dataset.real = _hv_usdc.textContent; _hv_usdc.textContent = '•••'; }
+    else { if (_hv_usdc.dataset.real) _hv_usdc.textContent = _hv_usdc.dataset.real; }
+  }
+  const _vu_usdc = document.getElementById('vu-usdc');
+  if (_vu_usdc) {
+    if (privacyMode) { _vu_usdc.dataset.real = _vu_usdc.textContent; _vu_usdc.textContent = '•••'; }
+    else { if (_vu_usdc.dataset.real) _vu_usdc.textContent = _vu_usdc.dataset.real; }
+  }
+  const _vq_usdc = document.getElementById('vq-usdc');
+  if (_vq_usdc) {
+    if (privacyMode) { _vq_usdc.dataset.real = _vq_usdc.textContent; _vq_usdc.textContent = '•••'; }
+    else { if (_vq_usdc.dataset.real) _vq_usdc.textContent = _vq_usdc.dataset.real; }
+  }
+  const _hv_btc = document.getElementById('hv-btc');
+  if (_hv_btc) {
+    if (privacyMode) { _hv_btc.dataset.real = _hv_btc.textContent; _hv_btc.textContent = '•••'; }
+    else { if (_hv_btc.dataset.real) _hv_btc.textContent = _hv_btc.dataset.real; }
+  }
+  const _vu_btc = document.getElementById('vu-btc');
+  if (_vu_btc) {
+    if (privacyMode) { _vu_btc.dataset.real = _vu_btc.textContent; _vu_btc.textContent = '•••'; }
+    else { if (_vu_btc.dataset.real) _vu_btc.textContent = _vu_btc.dataset.real; }
+  }
+  const _vq_btc = document.getElementById('vq-btc');
+  if (_vq_btc) {
+    if (privacyMode) { _vq_btc.dataset.real = _vq_btc.textContent; _vq_btc.textContent = '•••'; }
+    else { if (_vq_btc.dataset.real) _vq_btc.textContent = _vq_btc.dataset.real; }
+  }
+  const _hv_eth = document.getElementById('hv-eth');
+  if (_hv_eth) {
+    if (privacyMode) { _hv_eth.dataset.real = _hv_eth.textContent; _hv_eth.textContent = '•••'; }
+    else { if (_hv_eth.dataset.real) _hv_eth.textContent = _hv_eth.dataset.real; }
+  }
+  const _vu_eth = document.getElementById('vu-eth');
+  if (_vu_eth) {
+    if (privacyMode) { _vu_eth.dataset.real = _vu_eth.textContent; _vu_eth.textContent = '•••'; }
+    else { if (_vu_eth.dataset.real) _vu_eth.textContent = _vu_eth.dataset.real; }
+  }
+  const _vq_eth = document.getElementById('vq-eth');
+  if (_vq_eth) {
+    if (privacyMode) { _vq_eth.dataset.real = _vq_eth.textContent; _vq_eth.textContent = '•••'; }
+    else { if (_vq_eth.dataset.real) _vq_eth.textContent = _vq_eth.dataset.real; }
+  }
+  const _hv_sol = document.getElementById('hv-sol');
+  if (_hv_sol) {
+    if (privacyMode) { _hv_sol.dataset.real = _hv_sol.textContent; _hv_sol.textContent = '•••'; }
+    else { if (_hv_sol.dataset.real) _hv_sol.textContent = _hv_sol.dataset.real; }
+  }
+  const _vu_sol = document.getElementById('vu-sol');
+  if (_vu_sol) {
+    if (privacyMode) { _vu_sol.dataset.real = _vu_sol.textContent; _vu_sol.textContent = '•••'; }
+    else { if (_vu_sol.dataset.real) _vu_sol.textContent = _vu_sol.dataset.real; }
+  }
+  const _vq_sol = document.getElementById('vq-sol');
+  if (_vq_sol) {
+    if (privacyMode) { _vq_sol.dataset.real = _vq_sol.textContent; _vq_sol.textContent = '•••'; }
+    else { if (_vq_sol.dataset.real) _vq_sol.textContent = _vq_sol.dataset.real; }
+  }
+  const _hv_gold = document.getElementById('hv-gold');
+  if (_hv_gold) {
+    if (privacyMode) { _hv_gold.dataset.real = _hv_gold.textContent; _hv_gold.textContent = '•••'; }
+    else { if (_hv_gold.dataset.real) _hv_gold.textContent = _hv_gold.dataset.real; }
+  }
+  const _vu_gold = document.getElementById('vu-gold');
+  if (_vu_gold) {
+    if (privacyMode) { _vu_gold.dataset.real = _vu_gold.textContent; _vu_gold.textContent = '•••'; }
+    else { if (_vu_gold.dataset.real) _vu_gold.textContent = _vu_gold.dataset.real; }
+  }
+  const _vq_gold = document.getElementById('vq-gold');
+  if (_vq_gold) {
+    if (privacyMode) { _vq_gold.dataset.real = _vq_gold.textContent; _vq_gold.textContent = '•••'; }
+    else { if (_vq_gold.dataset.real) _vq_gold.textContent = _vq_gold.dataset.real; }
+  }
+  const _hv_bnb = document.getElementById('hv-bnb');
+  if (_hv_bnb) {
+    if (privacyMode) { _hv_bnb.dataset.real = _hv_bnb.textContent; _hv_bnb.textContent = '•••'; }
+    else { if (_hv_bnb.dataset.real) _hv_bnb.textContent = _hv_bnb.dataset.real; }
+  }
+  const _vu_bnb = document.getElementById('vu-bnb');
+  if (_vu_bnb) {
+    if (privacyMode) { _vu_bnb.dataset.real = _vu_bnb.textContent; _vu_bnb.textContent = '•••'; }
+    else { if (_vu_bnb.dataset.real) _vu_bnb.textContent = _vu_bnb.dataset.real; }
+  }
+  const _vq_bnb = document.getElementById('vq-bnb');
+  if (_vq_bnb) {
+    if (privacyMode) { _vq_bnb.dataset.real = _vq_bnb.textContent; _vq_bnb.textContent = '•••'; }
+    else { if (_vq_bnb.dataset.real) _vq_bnb.textContent = _vq_bnb.dataset.real; }
+  }
+  const _hv_doge = document.getElementById('hv-doge');
+  if (_hv_doge) {
+    if (privacyMode) { _hv_doge.dataset.real = _hv_doge.textContent; _hv_doge.textContent = '•••'; }
+    else { if (_hv_doge.dataset.real) _hv_doge.textContent = _hv_doge.dataset.real; }
+  }
+  const _vu_doge = document.getElementById('vu-doge');
+  if (_vu_doge) {
+    if (privacyMode) { _vu_doge.dataset.real = _vu_doge.textContent; _vu_doge.textContent = '•••'; }
+    else { if (_vu_doge.dataset.real) _vu_doge.textContent = _vu_doge.dataset.real; }
+  }
+  const _vq_doge = document.getElementById('vq-doge');
+  if (_vq_doge) {
+    if (privacyMode) { _vq_doge.dataset.real = _vq_doge.textContent; _vq_doge.textContent = '•••'; }
+    else { if (_vq_doge.dataset.real) _vq_doge.textContent = _vq_doge.dataset.real; }
+  }
+  const _hv_ada = document.getElementById('hv-ada');
+  if (_hv_ada) {
+    if (privacyMode) { _hv_ada.dataset.real = _hv_ada.textContent; _hv_ada.textContent = '•••'; }
+    else { if (_hv_ada.dataset.real) _hv_ada.textContent = _hv_ada.dataset.real; }
+  }
+  const _vu_ada = document.getElementById('vu-ada');
+  if (_vu_ada) {
+    if (privacyMode) { _vu_ada.dataset.real = _vu_ada.textContent; _vu_ada.textContent = '•••'; }
+    else { if (_vu_ada.dataset.real) _vu_ada.textContent = _vu_ada.dataset.real; }
+  }
+  const _vq_ada = document.getElementById('vq-ada');
+  if (_vq_ada) {
+    if (privacyMode) { _vq_ada.dataset.real = _vq_ada.textContent; _vq_ada.textContent = '•••'; }
+    else { if (_vq_ada.dataset.real) _vq_ada.textContent = _vq_ada.dataset.real; }
+  }
+  const _hv_hype = document.getElementById('hv-hype');
+  if (_hv_hype) {
+    if (privacyMode) { _hv_hype.dataset.real = _hv_hype.textContent; _hv_hype.textContent = '•••'; }
+    else { if (_hv_hype.dataset.real) _hv_hype.textContent = _hv_hype.dataset.real; }
+  }
+  const _vu_hype = document.getElementById('vu-hype');
+  if (_vu_hype) {
+    if (privacyMode) { _vu_hype.dataset.real = _vu_hype.textContent; _vu_hype.textContent = '•••'; }
+    else { if (_vu_hype.dataset.real) _vu_hype.textContent = _vu_hype.dataset.real; }
+  }
+  const _vq_hype = document.getElementById('vq-hype');
+  if (_vq_hype) {
+    if (privacyMode) { _vq_hype.dataset.real = _vq_hype.textContent; _vq_hype.textContent = '•••'; }
+    else { if (_vq_hype.dataset.real) _vq_hype.textContent = _vq_hype.dataset.real; }
+  }
+  const _hv_link = document.getElementById('hv-link');
+  if (_hv_link) {
+    if (privacyMode) { _hv_link.dataset.real = _hv_link.textContent; _hv_link.textContent = '•••'; }
+    else { if (_hv_link.dataset.real) _hv_link.textContent = _hv_link.dataset.real; }
+  }
+  const _vu_link = document.getElementById('vu-link');
+  if (_vu_link) {
+    if (privacyMode) { _vu_link.dataset.real = _vu_link.textContent; _vu_link.textContent = '•••'; }
+    else { if (_vu_link.dataset.real) _vu_link.textContent = _vu_link.dataset.real; }
+  }
+  const _vq_link = document.getElementById('vq-link');
+  if (_vq_link) {
+    if (privacyMode) { _vq_link.dataset.real = _vq_link.textContent; _vq_link.textContent = '•••'; }
+    else { if (_vq_link.dataset.real) _vq_link.textContent = _vq_link.dataset.real; }
+  }
+  const _hv_sui = document.getElementById('hv-sui');
+  if (_hv_sui) {
+    if (privacyMode) { _hv_sui.dataset.real = _hv_sui.textContent; _hv_sui.textContent = '•••'; }
+    else { if (_hv_sui.dataset.real) _hv_sui.textContent = _hv_sui.dataset.real; }
+  }
+  const _vu_sui = document.getElementById('vu-sui');
+  if (_vu_sui) {
+    if (privacyMode) { _vu_sui.dataset.real = _vu_sui.textContent; _vu_sui.textContent = '•••'; }
+    else { if (_vu_sui.dataset.real) _vu_sui.textContent = _vu_sui.dataset.real; }
+  }
+  const _vq_sui = document.getElementById('vq-sui');
+  if (_vq_sui) {
+    if (privacyMode) { _vq_sui.dataset.real = _vq_sui.textContent; _vq_sui.textContent = '•••'; }
+    else { if (_vq_sui.dataset.real) _vq_sui.textContent = _vq_sui.dataset.real; }
+  }
+  const _hv_xrp = document.getElementById('hv-xrp');
+  if (_hv_xrp) {
+    if (privacyMode) { _hv_xrp.dataset.real = _hv_xrp.textContent; _hv_xrp.textContent = '•••'; }
+    else { if (_hv_xrp.dataset.real) _hv_xrp.textContent = _hv_xrp.dataset.real; }
+  }
+  const _vu_xrp = document.getElementById('vu-xrp');
+  if (_vu_xrp) {
+    if (privacyMode) { _vu_xrp.dataset.real = _vu_xrp.textContent; _vu_xrp.textContent = '•••'; }
+    else { if (_vu_xrp.dataset.real) _vu_xrp.textContent = _vu_xrp.dataset.real; }
+  }
+  const _vq_xrp = document.getElementById('vq-xrp');
+  if (_vq_xrp) {
+    if (privacyMode) { _vq_xrp.dataset.real = _vq_xrp.textContent; _vq_xrp.textContent = '•••'; }
+    else { if (_vq_xrp.dataset.real) _vq_xrp.textContent = _vq_xrp.dataset.real; }
+  }
+  // Input fields
+  const _inp_usdc = document.getElementById('h-usdc');
+  if (_inp_usdc) _inp_usdc.type = privacyMode ? 'password' : 'number';
+  const _inp_btc = document.getElementById('h-btc');
+  if (_inp_btc) _inp_btc.type = privacyMode ? 'password' : 'number';
+  const _inp_eth = document.getElementById('h-eth');
+  if (_inp_eth) _inp_eth.type = privacyMode ? 'password' : 'number';
+  const _inp_sol = document.getElementById('h-sol');
+  if (_inp_sol) _inp_sol.type = privacyMode ? 'password' : 'number';
+  const _inp_gold = document.getElementById('h-gold');
+  if (_inp_gold) _inp_gold.type = privacyMode ? 'password' : 'number';
+  const _inp_bnb = document.getElementById('h-bnb');
+  if (_inp_bnb) _inp_bnb.type = privacyMode ? 'password' : 'number';
+  const _inp_doge = document.getElementById('h-doge');
+  if (_inp_doge) _inp_doge.type = privacyMode ? 'password' : 'number';
+  const _inp_ada = document.getElementById('h-ada');
+  if (_inp_ada) _inp_ada.type = privacyMode ? 'password' : 'number';
+  const _inp_hype = document.getElementById('h-hype');
+  if (_inp_hype) _inp_hype.type = privacyMode ? 'password' : 'number';
+  const _inp_link = document.getElementById('h-link');
+  if (_inp_link) _inp_link.type = privacyMode ? 'password' : 'number';
+  const _inp_sui = document.getElementById('h-sui');
+  if (_inp_sui) _inp_sui.type = privacyMode ? 'password' : 'number';
+  const _inp_xrp = document.getElementById('h-xrp');
+  if (_inp_xrp) _inp_xrp.type = privacyMode ? 'password' : 'number';
   renderCards();
   renderSummary();
 }
