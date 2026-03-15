@@ -814,7 +814,7 @@ applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
         <span class="total-val" id="portfolioTotal">— USD</span>
       </div>
       <div style="display:flex;justify-content:center;margin-top:10px">
-        <button data-action="saveHoldings" style="width:33.333%;background:rgba(0,204,255,.1);border:1px solid var(--cyan);color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:.65rem;padding:10px;border-radius:3px;cursor:pointer;letter-spacing:.1em">💾 SAVE HOLDINGS</button>
+        <button onclick="saveHoldingsManual()" style="width:50%;background:rgba(0,204,255,.1);border:1px solid var(--cyan);color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:.65rem;padding:10px;border-radius:3px;cursor:pointer;letter-spacing:.1em;white-space:nowrap">💾 SAVE HOLDINGS</button>
       </div>
     </div>
   </div>
@@ -829,8 +829,8 @@ applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
 <script>
 // ── CONFIG ──────────────────────────────────────────────────────────────────
 let PUBLIC_SERVER_URL = 'https://moneyrain19-infinit-production.up.railway.app';
-let SERVER_URL = localStorage.getItem('alloc_server_url_p2') || '';
-let DASH_TOKEN = localStorage.getItem('alloc_dash_token_p2') || '';
+let SERVER_URL = localStorage.getItem('mcc_p2_server_url') || '';
+let DASH_TOKEN = localStorage.getItem('mcc_p2_token') || '';
 if (SERVER_URL) PUBLIC_SERVER_URL = SERVER_URL;
 if (SERVER_URL && DASH_TOKEN) {
   document.getElementById('serverUrl').value = SERVER_URL;
@@ -838,8 +838,8 @@ if (SERVER_URL && DASH_TOKEN) {
   document.getElementById('configBanner').style.display = 'none';
 }
 function logout() {
-  localStorage.removeItem('alloc_server_url_p2');
-  localStorage.removeItem('alloc_dash_token_p2');
+  localStorage.removeItem('mcc_p2_server_url');
+  localStorage.removeItem('mcc_p2_token');
   SERVER_URL = ''; DASH_TOKEN = '';
   document.getElementById('serverUrl').value = '';
   document.getElementById('dashToken').value = '';
@@ -855,8 +855,8 @@ function saveConfig() {
   if (!url || !token) { alert('Please enter URL and token!'); return; }
   SERVER_URL = url; DASH_TOKEN = token;
   PUBLIC_SERVER_URL = url;
-  localStorage.setItem('alloc_server_url_p2', url);
-  localStorage.setItem('alloc_dash_token_p2', token);
+  localStorage.setItem('mcc_p2_server_url', url);
+  localStorage.setItem('mcc_p2_token', token);
   document.getElementById('configBanner').style.display = 'none';
   applyPortfolioMode();
   loadHoldingsFromServer();
