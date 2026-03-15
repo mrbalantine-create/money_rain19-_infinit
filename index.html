@@ -1533,6 +1533,8 @@ async function loadHoldingsFromServer() {
       if (cached[k] > 0) { const el = document.getElementById('h-'+k); if (el) el.value = cached[k]; }
     });
     calcPortfolio();
+    // Auto-sync: push localStorage values to server to fix stale /tmp data after Railway restart
+    if (SERVER_URL && DASH_TOKEN) saveHoldingsToServer();
     return;
   }
 
